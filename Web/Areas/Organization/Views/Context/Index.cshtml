@@ -1,0 +1,732 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/lib/trumbowyg/trumbowyg.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+    <script src="~/Content/js/organization/context/index.js"></script>
+
+}
+
+@model Web.Areas.Organization.Data.OrganizationViewModel
+
+@section Styles{
+    <link href="~/Content/lib/trumbowyg/trumbowyg.css" rel="stylesheet" />
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+<nav>
+    <div class="nav nav-tabs f12" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active show" id="nav-swot-tab" data-toggle="tab" href="#nav-swot" data-hash="#nav-swot" role="tab" aria-controls="nav-swot" aria-selected="true">SWOT Analysis</a>
+        <a class="nav-item nav-link" id="nav-internal-tab" data-toggle="tab" href="#nav-internal" data-hash="#nav-internal" role="tab" aria-controls="nav-internal" aria-selected="false">Internal Issues</a>
+        <a class="nav-item nav-link" id="nav-external-tab" data-toggle="tab" href="#nav-external" data-hash="#nav-external" role="tab" aria-controls="nav-external" aria-selected="false">External Issues</a>
+        <a class="nav-item nav-link" id="nav-stakeholder-tab" data-toggle="tab" href="#nav-stakeholder" data-hash="#nav-stakeholder" role="tab" aria-controls="nav-stakeholder" aria-selected="false">Stakeholder Issues</a>
+    </div>
+</nav>
+<div class="tab-content f12" id="nav-tabContent">
+    <div class="tab-pane  fade in show active" id="nav-swot" role="tabpanel" aria-labelledby="nav-swot-tab">
+        <div class="row no-gutters pt-2">
+            <div class="col-6 pr-1">
+                <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="align-middle">
+                                Strength
+                            </th>
+                            <th class="w-5">
+                                <button id="btn-add-strength" class="btn btn-sm btn-outline-primary fa-pull-right"><i class="fa fa-plus"></i></button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2">
+                                <table class="table table-bordered" width="100%" cellspacing="0">
+                                    @foreach (var a in Model.Strengths) {
+                                        <tr>
+                                            <td class="w-50">
+                                                @a.Name <br />
+                                                <small>@a.IssueTypeName - @a.BusinessRiskTypeName</small>
+                                            </td>
+                                            <td>@a.EmployeeName</td>
+                                            <td class="w-10 text-center"><div class="dv-box" style="background-color: @a.RatingColor;"></div></td>
+                                            <td>@a.RatingName</td>
+                                            <td class="w-10 text-center">
+                                                <div class="btn-group" role="group">
+                                                    <a href="javascript:void(0);" class="btn btn-sm btn-secondary btn-edit-swot" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                                    <a href="javascript:void(0);" class="btn btn-sm btn-danger btn-delete-swot" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-6 pl-1">
+                <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="align-middle">
+                                Weakness
+                            </th>
+                            <th class="w-5">
+                                <button id="btn-add-weakness" class="btn btn-sm btn-outline-primary fa-pull-right"><i class="fa fa-plus"></i></button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2">
+                                <table class="table table-bordered" width="100%" cellspacing="0">
+                                    @foreach (var a in Model.Weaknesses) {
+                                        <tr>
+                                            <td class="w-50">
+                                                @a.Name <br />
+                                                <small>@a.IssueTypeName - @a.BusinessRiskTypeName</small>
+                                            </td>
+                                            <td>@a.EmployeeName</td>
+                                            <td class="w-10 text-center"><div class="dv-box" style="background-color: @a.RatingColor;"></div></td>
+                                            <td>@a.RatingName</td>
+                                            <td class="w-10 text-center">
+                                                <div class="btn-group" role="group">
+                                                    <a href="javascript:void(0);" class="btn btn-sm btn-secondary btn-edit-swot" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                                    <a href="javascript:void(0);" class="btn btn-sm btn-danger btn-delete-swot" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-6 pr-1">
+                <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="align-middle">
+                                Opportunity
+                            </th>
+                            <th class="w-5">
+                                <button id="btn-add-opportunity" class="btn btn-sm btn-outline-primary fa-pull-right"><i class="fa fa-plus"></i></button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2">
+                                <table class="table table-bordered" width="100%" cellspacing="0">
+                                    @foreach (var a in Model.Opportunities) {
+                                        <tr>
+                                            <td class="w-50">
+                                                @a.Name <br />
+                                                <small>@a.IssueTypeName - @a.BusinessRiskTypeName</small>
+                                            </td>
+                                            <td>@a.EmployeeName</td>
+                                            <td class="w-10 text-center"><div class="dv-box" style="background-color: @a.RatingColor;"></div></td>
+                                            <td>@a.RatingName</td>
+                                            <td class="w-10 text-center">
+                                                <div class="btn-group" role="group">
+                                                    <a href="javascript:void(0);" class="btn btn-sm btn-secondary btn-edit-swot" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                                    <a href="javascript:void(0);" class="btn btn-sm btn-danger btn-delete-swot" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-6 pl-1">
+                <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="align-middle">
+                                Threat
+                            </th>
+                            <th class="w-5">
+                                <button id="btn-add-threat" class="btn btn-sm btn-outline-primary fa-pull-right"><i class="fa fa-plus"></i></button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2">
+                                <table class="table table-bordered" width="100%" cellspacing="0">
+                                    @foreach (var a in Model.Threats) {
+                                        <tr>
+                                            <td class="w-50">
+                                                @a.Name <br />
+                                                <small>@a.IssueTypeName - @a.BusinessRiskTypeName</small>
+                                            </td>
+                                            <td>@a.EmployeeName</td>
+                                            <td class="w-10 text-center"><div class="dv-box" style="background-color: @a.RatingColor;"></div></td>
+                                            <td>@a.RatingName</td>
+                                            <td class="w-10 text-center">
+                                                <div class="btn-group" role="group">
+                                                    <a href="javascript:void(0);" class="btn btn-sm btn-secondary btn-edit-swot" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                                    <a href="javascript:void(0);" class="btn btn-sm btn-danger btn-delete-swot" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tab-pane fade" id="nav-internal" role="tabpanel" aria-labelledby="nav-internal-tab">
+        <div class="row no-gutters pt-2">
+            @foreach (var a in Model.IssueCategories) {
+                <div class="col-6 pr-2">
+                    <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="align-middle">
+                                    @a.Name
+                                </th>
+                                <th class="w-5">
+                                    <button class="btn btn-sm btn-outline-primary fa-pull-right btn-add-internal-issue" data-issue-category-id="@a.Id" data-issue-category-name="@a.Name"><i class="fa fa-plus"></i></button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="2">
+                                    <table class="table table-bordered" width="100%" cellspacing="0">
+                                        @foreach (var i in Model.InternalIssues.Where(b => b.IssueCategoryId == a.Id).ToList()) {
+                                            <tr>
+                                                <td class="w-50">
+                                                    @i.Name <br />
+                                                    <small>@i.IssueTypeName - @i.BusinessRiskTypeName</small>
+                                                </td>
+                                                <td>@i.EmployeeName</td>
+                                                <td class="w-10 text-center"><div class="dv-box" style="background-color: @i.RatingColor;"></div></td>
+                                                <td>@i.RatingName</td>
+                                                <td class="w-10 text-center">
+                                                    <div class="btn-group" role="group">
+                                                        <a href="javascript:void(0);" class="btn btn-sm btn-secondary btn-edit-internal-issue" data-id="@i.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                                        <a href="javascript:void(0);" class="btn btn-sm btn-danger btn-delete-internal-issue" data-id="@i.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-external" role="tabpanel" aria-labelledby="nav-external-tab">
+        <div class="row no-gutters pt-2">
+            @foreach (var a in Model.IssueCategories) {
+                <div class="col-6 pr-2">
+                    <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="align-middle">
+                                    @a.Name
+                                </th>
+                                <th class="w-5">
+                                    <button class="btn btn-sm btn-outline-primary fa-pull-right btn-add-external-issue" data-issue-category-id="@a.Id" data-issue-category-name="@a.Name"><i class="fa fa-plus"></i></button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="2">
+                                    <table class="table table-bordered" width="100%" cellspacing="0">
+                                        @foreach (var i in Model.ExternalIssues.Where(b => b.IssueCategoryId == a.Id).ToList()) {
+                                            <tr>
+                                                <td class="w-50">
+                                                    @i.Name <br />
+                                                    <small>@i.IssueTypeName - @i.BusinessRiskTypeName</small>
+                                                </td>
+                                                <td>@i.EmployeeName</td>
+                                                <td class="w-10 text-center"><div class="dv-box" style="background-color: @i.RatingColor;"></div></td>
+                                                <td>@i.RatingName</td>
+                                                <td class="w-10 text-center">
+                                                    <div class="btn-group" role="group">
+                                                        <a href="javascript:void(0);" class="btn btn-sm btn-secondary btn-edit-external-issue" data-id="@i.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                                        <a href="javascript:void(0);" class="btn btn-sm btn-danger btn-delete-external-issue" data-id="@i.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-stakeholder" role="tabpanel" aria-labelledby="nav-stakeholder-tab">
+        <div class="row no-gutters">
+            <div class="col-12 pt-2">
+                <strong>Stakeholder Analysis</strong>
+            </div>
+            <div class="col-12 pt-2">
+                <table class="table table-bordered">
+                    <tr>
+                        <td><strong>INTERNAL</strong></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <div class="col-4">
+                                    <button class="btn btn-primary w-100">Internal Users</button>
+                                </div>
+                                <div class="col-4 pl-2">
+                                    <button class="btn btn-primary w-100">Employees</button>
+                                </div>
+                                <div class="col-4 pl-2">
+                                    <button class="btn btn-primary w-100">GPMC</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-12 pt-2">
+                <table class="table table-bordered">
+                    <tr>
+                        <td><strong>EXTERNAL</strong></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <div class="col-4">
+                                    <button class="btn btn-primary w-100">Customers</button>
+                                </div>
+                                <div class="col-4 pl-2">
+                                    <button class="btn btn-primary w-100">Suppliers</button>
+                                </div>
+                                <div class="col-4 pl-2">
+                                    <button class="btn btn-primary w-100">Government</button>
+                                </div>
+                                <div class="col-4 pl-2 pt-2">
+                                    <button class="btn btn-primary w-100">Regulators</button>
+                                </div>
+                                <div class="col-4 pl-2 pt-2">
+                                    <button class="btn btn-primary w-100">PMO</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="mdl-new-swot" tabindex="-1" role="dialog" aria-labelledby="mdl-new-swot" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Issue Type</label>
+                        <select class="fld-issue-type"></select>
+                        <input type="hidden" name="IssueTypeId" id="fld-new-issue-type-id" data-required="true" />
+                        <input type="hidden" name="IssueTypeName" id="fld-new-issue-type-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Business Risk Type</label>
+                        <select class="fld-business-risk-type"></select>
+                        <input type="hidden" name="BusinessRiskTypeId" id="fld-new-business-risk-type-id" data-required="true" />
+                        <input type="hidden" name="BusinessRiskTypeName" id="fld-new-business-risk-type-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Stakeholder</label>
+                        <select class="fld-employees" placeholder="-"></select>
+                        <input type="hidden" name="EmployeeId" id="fld-new-employee-id" data-required="true" />
+                        <input type="hidden" name="EmployeeName" id="fld-new-employee-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Rating</label>
+                        <select class="fld-ratings"></select>
+                        <input type="hidden" name="OrganizationId" id="fld-new-organization-id" data-required="true" value="@Model.Organization.Id" />
+                        <input type="hidden" name="RatingId" id="fld-new-rating-id" data-required="true" />
+                        <input type="hidden" name="RatingName" id="fld-new-rating-name" data-required="true" />
+                        <input type="hidden" name="RatingColor" id="fld-new-rating-color" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label class="swot-type"></label>
+                        <input type="hidden" class="form-control" id="fld-new-swot-tag" name="Tag" data-required="true" />
+                        <input type="text" class="form-control" id="fld-new-swot-name" name="Name" data-required="true" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-swot-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-swot-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-swot" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-swot" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-edit">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Issue Type</label>
+                        <select class="fld-edit-issue-type"></select>
+                        <input type="hidden" name="IssueTypeId" id="fld-edit-issue-type-id" data-required="true" />
+                        <input type="hidden" name="IssueTypeName" id="fld-edit-issue-type-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Business Risk Type</label>
+                        <select class="fld-edit-business-risk-type"></select>
+                        <input type="hidden" name="BusinessRiskTypeId" id="fld-edit-business-risk-type-id" data-required="true" />
+                        <input type="hidden" name="BusinessRiskTypeName" id="fld-edit-business-risk-type-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Stakeholder</label>
+                        <select class="fld-edit-employees" placeholder="-"></select>
+                        <input type="hidden" name="EmployeeId" id="fld-edit-employee-id" data-required="true" />
+                        <input type="hidden" name="EmployeeName" id="fld-edit-employee-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Rating</label>
+                        <select class="fld-edit-ratings"></select>
+                        <input type="hidden" name="OrganizationId" id="fld-edit-organization-id" data-required="true" value="@Model.Organization.Id" />
+                        <input type="hidden" name="RatingId" id="fld-edit-rating-id" data-required="true" />
+                        <input type="hidden" name="RatingName" id="fld-edit-rating-name" data-required="true" />
+                        <input type="hidden" name="RatingColor" id="fld-edit-rating-color" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label class="edit-swot-type">Name:</label>
+                        <input type="hidden" name="Id" id="fld-edit-swot-id" data-required="true" />
+                        <input type="hidden" class="form-control" id="fld-edit-swot-tag" name="Tag" data-required="true" />
+                        <input type="text" class="form-control" id="fld-edit-swot-name" name="Name" data-required="true" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-swot-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-swot-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="mdl-new-pestle" tabindex="-1" role="dialog" aria-labelledby="mdl-new-pestle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new-pestle">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Rating</label>
+                        <select class="fld-pestle-ratings"></select>
+                        <input type="hidden" name="OrganizationId" id="fld-new-pestle-organization-id" data-required="true" value="@Model.Organization.Id" />
+                        <input type="hidden" name="RatingId" id="fld-new-pestle-rating-id" data-required="true" />
+                        <input type="hidden" name="RatingName" id="fld-new-pestle-rating-name" data-required="true" />
+                        <input type="hidden" name="RatingColor" id="fld-new-pestle-rating-color" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label class="pestle-type"></label>
+                        <input type="hidden" class="form-control" id="fld-new-pestle-tag" name="Tag" data-required="true" />
+                        <input type="text" class="form-control" id="fld-new-pestle-name" name="Name" data-required="true" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-pestle-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-pestle-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-pestle" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-pestle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-edit-pestle">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Rating</label>
+                        <select class="fld-edit-pestle-ratings"></select>
+                        <input type="hidden" name="OrganizationId" id="fld-edit-pestle-organization-id" data-required="true" value="@Model.Organization.Id" />
+                        <input type="hidden" name="RatingId" id="fld-edit-pestle-rating-id" data-required="true" />
+                        <input type="hidden" name="RatingName" id="fld-edit-pestle-rating-name" data-required="true" />
+                        <input type="hidden" name="RatingColor" id="fld-edit-pestle-rating-color" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label class="edit-pestle-type"></label>
+                        <input type="hidden" name="Id" id="fld-edit-pestle-id" data-required="true" />
+                        <input type="hidden" class="form-control" id="fld-edit-pestle-tag" name="Tag" data-required="true" />
+                        <input type="text" class="form-control" id="fld-edit-pestle-name" name="Name" data-required="true" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-pestle-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-pestle-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="mdl-new-internal" tabindex="-1" role="dialog" aria-labelledby="mdl-new-internal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new-internal">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Issue Type</label>
+                        <select class="fld-internal-issue-type"></select>
+                        <input type="hidden" name="IssueTypeId" id="fld-new-internal-issue-type-id" data-required="true" />
+                        <input type="hidden" name="IssueTypeName" id="fld-new-internal-issue-type-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Business Risk Type</label>
+                        <select class="fld-internal-business-risk-type"></select>
+                        <input type="hidden" name="BusinessRiskTypeId" id="fld-new-internal-business-risk-type-id" data-required="true" />
+                        <input type="hidden" name="BusinessRiskTypeName" id="fld-new-internal-business-risk-type-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Stakeholder</label>
+                        <select class="fld-internal-employees" placeholder="-"></select>
+                        <input type="hidden" name="EmployeeId" id="fld-new-internal-employee-id" data-required="true" />
+                        <input type="hidden" name="EmployeeName" id="fld-new-internal-employee-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Rating</label>
+                        <select class="fld-internal-ratings"></select>
+                        <input type="hidden" name="OrganizationId" id="fld-new-internal-organization-id" data-required="true" value="@Model.Organization.Id" />
+                        <input type="hidden" name="RatingId" id="fld-new-internal-rating-id" data-required="true" />
+                        <input type="hidden" name="RatingName" id="fld-new-internal-rating-name" data-required="true" />
+                        <input type="hidden" name="RatingColor" id="fld-new-internal-rating-color" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label class="internal-type"></label>
+                        <input type="hidden" class="form-control" id="fld-new-internal-category-id" name="IssueCategoryId" data-required="true" />
+                        <input type="hidden" class="form-control" id="fld-new-internal-category-name" name="IssueCategoryName" data-required="true" />
+                        <input type="text" class="form-control" id="fld-new-internal-name" name="Name" data-required="true" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-internal-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-internal-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-internal" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-internal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-edit-internal">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Issue Type</label>
+                        <select class="fld-edit-internal-issue-type"></select>
+                        <input type="hidden" name="IssueTypeId" id="fld-edit-internal-issue-type-id" data-required="true" />
+                        <input type="hidden" name="IssueTypeName" id="fld-edit-internal-issue-type-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Business Risk Type</label>
+                        <select class="fld-edit-internal-business-risk-type"></select>
+                        <input type="hidden" name="BusinessRiskTypeId" id="fld-edit-internal-business-risk-type-id" data-required="true" />
+                        <input type="hidden" name="BusinessRiskTypeName" id="fld-edit-internal-business-risk-type-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Stakeholder</label>
+                        <select class="fld-edit-internal-employees" placeholder="-"></select>
+                        <input type="hidden" name="EmployeeId" id="fld-edit-internal-employee-id" data-required="true" />
+                        <input type="hidden" name="EmployeeName" id="fld-edit-internal-employee-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Rating</label>
+                        <select class="fld-edit-internal-ratings"></select>
+                        <input type="hidden" name="OrganizationId" id="fld-edit-internal-organization-id" data-required="true" value="@Model.Organization.Id" />
+                        <input type="hidden" name="RatingId" id="fld-edit-internal-rating-id" data-required="true" />
+                        <input type="hidden" name="RatingName" id="fld-edit-internal-rating-name" data-required="true" />
+                        <input type="hidden" name="RatingColor" id="fld-edit-internal-rating-color" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label class="internal-type"></label>
+                        <input type="hidden" class="form-control" id="fld-edit-internal-id" name="Id" data-required="true" />
+                        <input type="hidden" class="form-control" id="fld-edit-internal-category-id" name="IssueCategoryId" data-required="true" />
+                        <input type="hidden" class="form-control" id="fld-edit-internal-category-name" name="IssueCategoryName" data-required="true" />
+                        <input type="text" class="form-control" id="fld-edit-internal-name" name="Name" data-required="true" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-internal-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-internal-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="mdl-new-external" tabindex="-1" role="dialog" aria-labelledby="mdl-new-external" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new-external">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Issue Type</label>
+                        <select class="fld-external-issue-type"></select>
+                        <input type="hidden" name="IssueTypeId" id="fld-new-external-issue-type-id" data-required="true" />
+                        <input type="hidden" name="IssueTypeName" id="fld-new-external-issue-type-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Business Risk Type</label>
+                        <select class="fld-external-business-risk-type"></select>
+                        <input type="hidden" name="BusinessRiskTypeId" id="fld-new-external-business-risk-type-id" data-required="true" />
+                        <input type="hidden" name="BusinessRiskTypeName" id="fld-new-external-business-risk-type-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Stakeholder</label>
+                        <select class="fld-external-employees" placeholder="-"></select>
+                        <input type="hidden" name="EmployeeId" id="fld-new-external-employee-id" data-required="true" />
+                        <input type="hidden" name="EmployeeName" id="fld-new-external-employee-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Rating</label>
+                        <select class="fld-external-ratings"></select>
+                        <input type="hidden" name="OrganizationId" id="fld-new-external-organization-id" data-required="true" value="@Model.Organization.Id" />
+                        <input type="hidden" name="RatingId" id="fld-new-external-rating-id" data-required="true" />
+                        <input type="hidden" name="RatingName" id="fld-new-external-rating-name" data-required="true" />
+                        <input type="hidden" name="RatingColor" id="fld-new-external-rating-color" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label class="external-type"></label>
+                        <input type="hidden" class="form-control" id="fld-new-external-category-id" name="IssueCategoryId" data-required="true" />
+                        <input type="hidden" class="form-control" id="fld-new-external-category-name" name="IssueCategoryName" data-required="true" />
+                        <input type="text" class="form-control" id="fld-new-external-name" name="Name" data-required="true" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-external-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-external-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-external" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-external" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-edit-external">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Issue Type</label>
+                        <select class="fld-edit-external-issue-type"></select>
+                        <input type="hidden" name="IssueTypeId" id="fld-edit-external-issue-type-id" data-required="true" />
+                        <input type="hidden" name="IssueTypeName" id="fld-edit-external-issue-type-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Business Risk Type</label>
+                        <select class="fld-edit-external-business-risk-type"></select>
+                        <input type="hidden" name="BusinessRiskTypeId" id="fld-edit-external-business-risk-type-id" data-required="true" />
+                        <input type="hidden" name="BusinessRiskTypeName" id="fld-edit-external-business-risk-type-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Stakeholder</label>
+                        <select class="fld-edit-external-employees" placeholder="-"></select>
+                        <input type="hidden" name="EmployeeId" id="fld-edit-external-employee-id" data-required="true" />
+                        <input type="hidden" name="EmployeeName" id="fld-edit-external-employee-name" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Rating</label>
+                        <select class="fld-edit-external-ratings"></select>
+                        <input type="hidden" name="OrganizationId" id="fld-edit-external-organization-id" data-required="true" value="@Model.Organization.Id" />
+                        <input type="hidden" name="RatingId" id="fld-edit-external-rating-id" data-required="true" />
+                        <input type="hidden" name="RatingName" id="fld-edit-external-rating-name" data-required="true" />
+                        <input type="hidden" name="RatingColor" id="fld-edit-external-rating-color" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label class="external-type"></label>
+                        <input type="hidden" class="form-control" id="fld-edit-external-id" name="Id" data-required="true" />
+                        <input type="hidden" class="form-control" id="fld-edit-external-category-id" name="IssueCategoryId" data-required="true" />
+                        <input type="hidden" class="form-control" id="fld-edit-external-category-name" name="IssueCategoryName" data-required="true" />
+                        <input type="text" class="form-control" id="fld-edit-external-name" name="Name" data-required="true" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-external-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-external-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>

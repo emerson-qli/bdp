@@ -1,0 +1,361 @@
+﻿@{
+    ViewBag.Title = "Employees";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/js/human-capital/employees/index.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@model Web.Areas.HumanCapital.Data.HumanCapitalViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-6">
+                Employees
+            </div>
+            <div class="col-6">
+                <button id="btn-add" class="btn btn-sm btn-primary fa-pull-right"><i class="fa fa-plus"></i> Add Employee</button>
+                <input type="hidden" id="fld-permission-delete" value="@Model.DeletePermission" />
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <small>
+                <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th>Name</th>
+                            <th>Address</th>
+                            <th>Date of Birth</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var ctr = 0;
+                            foreach (var a in Model.Employees) {
+                                ctr++;
+                                var currentPosition = a.EmployeePositions.Where(b => b.Tag == Domain.Models.EmployeePositionState.Active).FirstOrDefault();
+                                <tr>
+                                    <td class="text-center w-5 align-top">@ctr</td>
+                                    @{
+                                        var border = "";
+                                        if (a.UserId != null) {
+                                            border = "border-left: inset 3px #469341";
+                                        }
+                                    }
+                                    <td style="@border">
+                                        @a.Fullname<br />
+                                        <small>@a.Gender, @a.Nationality</small>
+                                    </td>
+                                    <td>@a.Address</td>
+                                    <td>@a.DateOfBirth.ToShortDateString()</td>
+                                    <td class="text-center w-10">
+                                        <div class="btn-group" role="group">
+                                            <a href="javascript:void(0);" class="btn btn-secondary btn-view" data-id="@a.UserId" title="Profile"><i class="fa fa-eye"></i></a>
+                                            <a href="javascript:void(0);" class="btn btn-secondary btn-edit" data-id="@a.Id" title="Information"><i class="fa fa-edit"></i></a>
+                                            <a href="javascript:void(0);" class="btn btn-secondary btn-photo" data-id="@a.Id" title="Photo"><i class="far fa-id-badge"></i></a>
+                                            <a href="javascript:void(0);" class="btn btn-secondary btn-account" data-id="@a.UserId" title="Account"><i class="far fa-user"></i></a>
+                                            <a href="~/HumanCapital/Employees/ContactDetails/@a.Id" class="btn btn-secondary btn-contacts" data-id="@a.Id" title="Contact Details"><i class="fas fa-address-book"></i></a>
+                                            <a href="~/HumanCapital/Employees/Documents/@a.Id" class="btn btn-secondary btn-documents" data-id="@a.Id" title="Documents"><i class="fas fa-file"></i></a>
+
+                                            <div class="btn-group" role="group">
+                                                <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="fas fa-user-cog"></i>
+                                                </button>
+                                                <div class="dropdown-menu f12" aria-labelledby="btnGroupDrop1">
+                                                    <a class="dropdown-item" href="~/HumanCapital/Employees/Designations/@a.Id">Designations</a>
+                                                    <a class="dropdown-item" href="~/HumanCapital/Employees/Competencies/@a.Id">Trainings</a>
+                                                    <a class="dropdown-item" href="~/HumanCapital/Employees/Experiences/@a.Id">Experiences</a>
+                                                    <a class="dropdown-item" href="~/HumanCapital/Employees/Education/@a.Id">Education</a>
+                                                    <a class="dropdown-item" href="~/HumanCapital/Employees/JobDescriptions/@a.Id">Job Descriptions</a>
+                                                    <a class="dropdown-item" href="~/HumanCapital/Employees/KPIs/@a.Id">KPI</a>
+                                                    <a class="dropdown-item" href="~/HumanCapital/Employees/Programs/@a.Id">Programs</a>
+                                                    <a class="dropdown-item" href="~/HumanCapital/Employees/Qualifications/@a.Id">Qualifications</a>
+                                                    <a class="dropdown-item" href="~/HumanCapital/Employees/RoleAndResponsibilities/@a.Id">Role and Responsibilities</a>
+                                                    <a class="dropdown-item" href="~/HumanCapital/Employees/Reports/@a.Id">Reports</a>
+                                                </div>
+                                            </div>
+                                            <a href="javascript:void(0);" class="btn btn-danger btn-delete" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            }
+
+                        }
+                    <tfoot>
+                        <tr>
+                            <td colspan="5" style="height:450px;"></td>
+                        </tr>
+                    </tfoot>
+                    </tbody>
+
+                </table>
+            </small>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new" tabindex="-1" role="dialog" aria-labelledby="mdl-new" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Employee</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new">
+                <div class="row no-gutters">
+                    <div class="col-4">
+                        <input type="text" class="form-control mb-2" id="fld-new-firstname" name="Firstname" data-required="true" placeholder="First name" />
+                    </div>
+                    <div class="col-4 pl-1">
+                        <input type="text" class="form-control mb-2" id="fld-new-middlename" name="Middlename" data-required="true" placeholder="Middle name" />
+                    </div>
+                    <div class="col-4 pl-1">
+                        <input type="text" class="form-control mb-2" id="fld-new-lastname" name="Lastname" data-required="true" placeholder="Last name" />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <input type="text" class="form-control mb-2" id="fld-address" name="Address" data-required="true" placeholder="Address" />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-4 pr-1">
+                        <input type="text" class="form-control mb-2 fld-date" id="fld-new-date-of-birth" name="DateOfBirth" data-required="true" placeholder="Date of Birth" />
+                    </div>
+                    <div class="col-4 pl-1">
+                        <select class="fld-gender form-control">
+                            <option value="">Gender</option>
+                            <option value="Female">Female</option>
+                            <option value="Male">Male</option>
+                        </select>
+                        <input type="hidden" id="fld-selected-gender" name="Gender" data-required="true" />
+                    </div>
+                    <div class="col-4 pl-1">
+                        <input type="text" class="form-control mb-2" id="fld-new-nationality" name="Nationality" data-required="true" placeholder="Nationality" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-photo" tabindex="-1" role="dialog" aria-labelledby="mdl-photo" aria-hidden="true">
+    <div class="modal-dialog modal modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Upload Photo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-update-photo">
+                <div class="row no-gutters">
+                    <div class="col-6">
+                        <strong>Uploaded file:</strong>
+                        <label class="lbl-file-uploaded" style="margin-bottom:0px !important;"></label><br />
+                        <strong>File name:</strong>
+                        <label class="lbl-file" style="margin-bottom:0px !important;"></label>
+                        <input type="hidden" id="fld-edit-photo-id" name="Id" data-required="true" />
+                        <input type="hidden" id="fld-file-name" name="Photo" data-required="true" />
+                        <input type="hidden" id="fld-original-file-name" name="PhotoOriginalFileName" data-required="true" />
+                    </div>
+                    <div class="col-6 pl-1">
+                        <progress id="file-uploadphoto-progress" style="display:none;" max="100" value="0"></progress>
+                        <form id="frm-photo-uploader">
+                            <div class="dv-uploader input-group ">
+                                <div class="custom-file">
+                                    <input type="file" name="file" class="custom-file-input f12" id="fle-photo-upload">
+                                    <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="dv-viewer">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-photo-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-user" tabindex="-1" role="dialog" aria-labelledby="mdl-user" aria-hidden="true">
+    <div class="modal-dialog modal modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Employee Account</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new-account">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Email</label>
+                        <input type="hidden" name="EmployeeId" id="fld-account-employee-id" data-required="true" />
+                        <input type="text" class="form-control" id="fld-account-email" name="Email" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Password</label>
+                        <input type="password" class="form-control" id="fld-account-password" autocomplete="new-password" name="Password" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Confirm Password</label>
+                        <input type="password" class="form-control" id="fld-account-confirm-password" autocomplete="new-password" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-account-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-account-save" class="btn btn-primary" data-dismiss="modal">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit" tabindex="-1" role="dialog" aria-labelledby="mdl-edit" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Employee</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit">
+                <div class="row no-gutters">
+                    <input type="hidden" id="fld-edit-user-id" name="UserId" />
+                    <input type="hidden" id="fld-edit-id" name="Id" data-required="true" />
+                    <div class="col-4">
+                        <input type="text" class="form-control mb-2" id="fld-edit-first-name" name="Firstname" data-required="true" placeholder="First name" />
+                    </div>
+                    <div class="col-4 pl-1">
+                        <input type="text" class="form-control mb-2" id="fld-edit-middle-name" name="Middlename" data-required="true" placeholder="Middle name" />
+                    </div>
+                    <div class="col-4 pl-1">
+                        <input type="text" class="form-control mb-2" id="fld-edit-last-name" name="Lastname" data-required="true" placeholder="Last name" />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <input type="text" class="form-control mb-2" id="fld-edit-address" name="Address" data-required="true" placeholder="Address" />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-4 pr-1">
+                        <input type="text" class="form-control mb-2 fld-date" id="fld-edit-date-of-birth" name="DateOfBirth" data-required="true" placeholder="Date of Birth" />
+                    </div>
+                    <div class="col-4 pl-1">
+                        <select class="fld-edit-gender form-control mb-2" name="Gender">
+                            <option value="">Gender</option>
+                            <option value="Female">Female</option>
+                            <option value="Male">Male</option>
+                        </select>
+                        <input type="hidden" id="fld-edit-selected-gender" name="Gender" data-required="true" />
+                    </div>
+                    <div class="col-4 pl-1">
+                        <input type="text" class="form-control mb-2" id="fld-edit-nationality" name="Nationality" data-required="true" placeholder="Nationality" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-add-position" tabindex="-1" role="dialog" aria-labelledby="mdl-add-position" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Employee</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit">
+                <label>Current?</label>
+                <select class="fld-position-states form-control">
+                    <option value="">-</option>
+                    <option value="1">No</option>
+                    <option value="0">Yes</option>
+                </select>
+                <input type="hidden" id="fld-selected-position-state" />
+
+                <label>Department</label>
+                <select class="fld-departments form-control" placeholder="-"></select>
+                <input type="hidden" id="fld-department-id" />
+                <input type="hidden" id="fld-department-name" />
+
+                <label>Designation</label>
+                <select class="fld-positions form-control" placeholder="-"></select>
+                <input type="hidden" id="fld-position-id" />
+                <input type="hidden" id="fld-position-name" />
+
+                <label>Supervisor</label>
+                <select class="fld-employees form-control" placeholder="-"></select>
+                <input type="hidden" id="fld-supervisor-id" />
+                <input type="hidden" id="fld-supervisor-name" />
+
+                <label>Start Date</label>
+                <input type="text" class="form-control fld-date fld-start-date" placeholder="-" />
+
+                <label>End Date</label>
+                <input type="text" class="form-control fld-date fld-end-date" placeholder="-" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-permission" tabindex="-1" role="dialog" aria-labelledby="mdl-permission" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Error</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-action">
+                <p class="p-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-alert-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,180 @@
+﻿
+@{
+    ViewBag.Title = "Annual Plan";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/js/audit-management/annual-plan/index.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@model Web.Areas.AuditManagement.Data.AuditManagementViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+<!--By Author | By Department | By Year | Mine-->
+
+<nav>
+    <div class="nav nav-tabs f12" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active show" id="nav-by-auditor-tab" data-toggle="tab" data-hash="#nav-by-auditor" href="#nav-by-auditor" role="tab" aria-controls="nav-by-auditor" aria-selected="true">Auditors</a>
+        <a class="nav-item nav-link" id="nav-by-year-tab" data-toggle="tab" href="#nav-by-year" data-hash="#nav-by-year" role="tab" aria-controls="nav-by-year" aria-selected="false">Audits</a>
+        @*<a class="nav-item nav-link" id="nav-mine-tab" data-toggle="tab" href="#nav-mine" data-hash="#nav-mine" role="tab" aria-controls="nav-mine" aria-selected="false">@Model.Employee.Fullname</a>*@
+    </div>
+</nav>
+
+<div class="card shadow mb-4 mt-2">
+    <div class="card-body">
+        <div class="tab-content" id="nav-tabContent">
+
+            <div class="tab-pane fade in show active" id="nav-by-auditor" role="tabpanel" aria-labelledby="nav-by-auditor-tab">
+                <div class="table-responsive">
+                    <small>
+                        <table class="table table-bordered" id="tbl-auditors" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="text-center w-5">#</th>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var ctr = 0;
+                                    foreach (var a in Model.AuditAuditors) {
+                                        ctr++;
+                                        <tr>
+                                            <td class="text-center align-middle w-5">@ctr</td>
+                                            <td>
+                                                <strong>@a.EmployeeName</strong> <br/>
+                                                <small>@a.DepartmentName</small>
+                                            </td>
+                                        </tr>
+                                    }
+
+                                }
+                            </tbody>
+                        </table>
+                    </small>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="nav-by-year" role="tabpanel" aria-labelledby="nav-by-year-tab">
+                <div class="table-responsive">
+                    <small>
+                        <table class="table table-bordered" id="tbl-audits" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="text-center w-5">#</th>
+                                    <th>Name</th>
+                                    <th>Audit Period</th>
+                                    <th>Author</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var cd = 0;
+                                    foreach (var a in Model.AuditPlans) {
+                                        cd++;
+                                        <tr>
+                                            <td class="text-center align-middle w-5">@cd</td>
+                                            <td>
+                                                <strong>@a.Name</strong> <br />
+                                                <small>@a.AuditCategoryName</small>
+                                            </td>
+                                            <td class="align-middle"><em>@a.StartDatePlan.Value.ToLongDateString() - @a.EndDatePlan.Value.ToLongDateString()</em></td>
+                                            <td class="align-middle">@a.AuthorName</td>
+                                            <td class="align-middle">
+                                                @if (a.Tag == Domain.Models.AuditPlanState.Audited) {<strong class="text-success">@a.Tag</strong>}
+                                                @if (a.Tag == Domain.Models.AuditPlanState.InProgress) {<strong class="text-danger">@a.Tag</strong>}
+                                                @if (a.Tag == Domain.Models.AuditPlanState.Initiated) {<strong class="text-secondary">@a.Tag</strong>}
+                                            </td>
+                                        </tr>
+                                    }
+
+                                }
+                            </tbody>
+                        </table>
+                    </small>
+                </div>
+            </div>
+
+            @*<div class="tab-pane fade" id="nav-mine" role="tabpanel" aria-labelledby="nav-mine-tab">
+                Mine
+            </div>*@
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new" tabindex="-1" role="dialog" aria-labelledby="mdl-new" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Department</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new">
+                <label>Name</label>
+                <input type="text" class="form-control mb-2" id="fld-new-name" name="Name" data-required="true" placeholder="Name" />
+
+                <label>Code</label>
+                <input type="text" class="form-control mb-2" id="fld-new-code" name="Code" data-required="true" placeholder="Code" />
+
+                <label>Description</label>
+                <input type="text" class="form-control mb-2" id="fld-new-description" name="Description" data-required="true" placeholder="Description" />
+
+                <label>Division</label>
+                <select class="fld-divisions"></select>
+                <input type="hidden" name="DivisionName" data-required="true" id="fld-selected-division-name" />
+                <input type="hidden" name="DivisionId" data-required="true" id="fld-selected-division-id" />
+
+                <label>Head</label>
+                <select class="fld-hods"></select>
+                <input type="hidden" name="HODName" id="fld-selected-hod-name" />
+                <input type="hidden" name="HODId" id="fld-selected-hod-id" />
+
+                <label>Level</label>
+                <select class="fld-levels"></select>
+                <input type="hidden" name="LevelName" data-required="true" id="fld-selected-level-name" />
+                <input type="hidden" name="LevelId" data-required="true" id="fld-selected-level-id" />
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit" tabindex="-1" role="dialog" aria-labelledby="mdl-edit" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Department</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit">
+                <input type="hidden" id="fld-edit-id" name="Id" data-required="true" />
+                <input type="text" class="form-control mb-2" id="fld-edit-name" name="Name" data-required="true" placeholder="Name" />
+                <input type="text" class="form-control" id="fld-edit-description" name="Description" data-required="true" placeholder="Description" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

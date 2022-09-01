@@ -1,0 +1,160 @@
+﻿
+@{
+    ViewBag.Title = "Change Request";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+
+
+@section Scripts{
+    <script src="~/Content/lib/trumbowyg/trumbowyg.js"></script>
+    <script src="~/Content/lib/pdf-object/pdf-object.js"></script>
+    <script src="~/Content/lib/articulate/articulate.js"></script>
+    <script src="~/Content/js/information-management/change-requests/index.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@model Web.Areas.InformationManagement.Data.InformationManagementViewModel
+
+@section Styles{
+    <link href="~/Content/lib/trumbowyg/trumbowyg.css" rel="stylesheet" />
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-6">
+                Change Requests
+            </div>
+            <div class="col-6">
+                <button id="btn-change" class="btn btn-sm btn-primary fa-pull-right"><i class="fa fa-edit"></i> New Change Request</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <small>
+                <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th>DRCN No.</th>
+                            <th>Title</th>
+                            <th>Created</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            string[] status = { "Draft", "For Approval", "-", "Published", "Cascaded", "Obsolete", "For Revision", "Submitted", "Revised", "For Obsoletion", "Obsolete" };
+                            var ctr = 0;
+                            foreach (var a in Model.DocumentRequests) {
+                                ctr++;
+                                <tr>
+                                    <td class="text-center w-5">@ctr</td>
+                                    <td class="w-25"><small>@a.DCRN</small></td>
+                                    <td>
+                                        @a.Name<br />
+                                        <small>@a.DocumentCategoryName - @a.DocumentTypeName</small>
+                                    <td>@a.CreatedAt.ToShortDateString()</td>
+                                    <td>@status[Convert.ToInt32(a.Tag)]</td>
+                                    <td class="w-10 text-center">
+                                        <div class="btn-group" role="group">
+                                            <a href="javascript:void(0);" class="btn btn-secondary btn-view-change-requests" data-id="@a.Id" title="Edit"><i class="fa fa-eye"></i></a>
+                                            <!--<a href="#" class="btn btn-secondary btn-edit" data-id="#" title="Edit"><i class="fa fa-edit"></i></a>-->
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </small>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new" tabindex="-1" role="dialog" aria-labelledby="mdl-new" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Division</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new">
+                <input type="text" class="form-control mb-2" id="fld-new-name" name="Name" data-required="true" placeholder="Name" />
+                <input type="text" class="form-control" id="fld-new-description" name="Description" data-required="true" placeholder="Description" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit" tabindex="-1" role="dialog" aria-labelledby="mdl-edit" aria-hidden="true">
+    <div class="modal-dialog f12 modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Change Document</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit">
+                <div class="row no-gutters">
+                    <label>Select a document</label>
+                    <select class="fld-edit-document form-control mb-2"></select>
+                    <label>Title</label>
+                    <input type="text" class="form-control mb-2" name="DocumentName" id="fld-edit-document-name" data-required="true" disabled />
+                    <label>Author</label>
+                    <input type="text" class="form-control mb-2" name="EmployeeName" id="fld-edit-employee-name" data-required="true" disabled />
+                    <label>Last Updated</label>
+                    <input type="text" class="form-control" name="Date" id="fld-edit-date" data-required="true" disabled />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                @if (Model.TextEditor != "None") {
+                    <button type="button" id="btn-edit-next" class="btn btn-primary">Next</button>
+                } else { 
+                    <button type="button" id="btn-edit-submit" class="btn btn-primary">Submit</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-pdf" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-pdf" aria-hidden="true">
+    <div class="modal-dialog modal-lg f12 modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Change Document</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-content">
+                <input type="hidden" name="Id" id="hdn-edit-id" data-required="true" />
+                <input type="hidden" name="EmployeeId" id="hdn-edit-employee-id" data-required="true" />
+                <input type="hidden" name="EmployeeName" id="hdn-edit-employee-name" data-required="true" />
+                <input type="hidden" name="DocumentId" id="hdn-edit-document-id" data-required="true" />
+                <input type="hidden" name="DocumentName" id="hdn-edit-document-name" data-required="true" />
+                <div style="height: 450px;" id="dv-pdf-viewer"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-back" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>

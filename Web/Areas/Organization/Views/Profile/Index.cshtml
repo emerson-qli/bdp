@@ -1,0 +1,1610 @@
+﻿
+@{
+    ViewBag.Title = "Profile";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+
+}
+
+@section Scripts{
+    <script src="~/Content/lib/trumbowyg/trumbowyg.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+    <script src="~/Content/js/organization/profile/index.js"></script>
+
+}
+
+@model Web.Areas.Organization.Data.OrganizationViewModel
+
+@section Styles{
+    <link href="~/Content/lib/trumbowyg/trumbowyg.css" rel="stylesheet" />
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+<div class="row no-gutters">
+    <div class="col-12">
+        <nav>
+            <div class="nav nav-tabs f12" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active show" id="nav-profile-tab" data-toggle="tab" data-hash="#nav-profile" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="true">Company Profile</a>
+                <a class="nav-item nav-link" id="nav-vmv-tab" data-toggle="tab" href="#nav-vmv" data-hash="#nav-vmv" role="tab" aria-controls="nav-vmv" aria-selected="false">Vision,Mission & Values</a>
+                <a class="nav-item nav-link" id="nav-pao-tab" data-toggle="tab" href="#nav-pao" data-hash="#nav-pao" role="tab" aria-controls="nav-pao" aria-selected="false">Policy and Objectives</a>
+                <a class="nav-item nav-link" id="nav-oc-tab" data-toggle="tab" href="#nav-oc" data-hash="#nav-oc" role="tab" aria-controls="nav-oc" aria-selected="false">Organization Chart</a>
+                <a class="nav-item nav-link" id="nav-cr-tab" data-toggle="tab" href="#nav-cr" data-hash="#nav-cr" role="tab" aria-controls="nav-cr" aria-selected="false">Compliance Register</a>
+                <a class="nav-item nav-link" id="nav-bpm-tab" data-toggle="tab" href="#nav-bpm" data-hash="#nav-bpm" role="tab" aria-controls="nav-bpm" aria-selected="false">Business Process Management</a>
+            </div>
+        </nav>
+    </div>
+</div>
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade in show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+        <div class="row no-gutters f12 dv-profile">
+            <div class="col-6">
+                <div class="row no-gutters">
+                    <div class="col-2 pt-2">
+                        <strong>Logo</strong><br />
+                        <button class="btn btn-outline-primary f12 btn-upload"><i class="fa fa-file-upload"></i> UPLOAD</button>
+                        <input type="hidden" id="fld-file-name" name="LogoUniqueFileName" data-required="true" value="@Model.Organization.LogoUniqueFileName" />
+                        <input type="hidden" id="fld-original-file-name" name="LogoFileName" data-required="true" value="@Model.Organization.LogoFileName" />
+                    </div>
+                    <div class="col-10 pt-2">
+                        <strong>&nbsp;</strong><br />
+                        <label class="lbl-file" style="margin-bottom:0px !important;"><a target="_blank" href="/content/files/@Model.Organization.LogoUniqueFileName">@Model.Organization.LogoFileName</a></label>
+                    </div>
+                    <div class="col-12 pt-2">
+                        <strong>Name</strong><br />
+                        <input type="hidden" name="Id" id="fld-profile-organization-id" data-required="true" value="@Model.Organization.Id" />
+                        <input type="text" class="form-control" name="Name" id="fld-profile-organization-name" data-required="true" value="@Model.Organization.Name" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <strong>Company Details</strong><br />
+                        <textarea type="text" class="form-control fld-editor" rows="7" name="CompanyDetails" data-required="true">@Model.Organization.CompanyDetails</textarea>
+                    </div>
+                    <div class="col-12 pt-2">
+                        <table class="table table-bordered">
+                            <tr>
+                                <td class="w-25 align-middle"><strong>Established</strong></td>
+                                <td><input type="text" class="form-control fld-date" name="Established" data-required="true" value="@Model.Organization.Established.ToShortDateString()" /></td>
+                                <td class="align-middle"><strong>Company Code</strong></td>
+                                <td><input type="text" class="form-control" name="Code" data-required="true" value="@Model.Organization.Code" /></td>
+                            </tr>
+                            <tr>
+                                <td class="align-middle"><strong>Address</strong></td>
+                                <td colspan="3"><input type="text" class="form-control" name="Address" data-required="true" value="@Model.Organization.Address" /></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="col-6">
+                        <button id="btn-view-organization-profile" class="btn btn-sm btn-outline-primary f12" data-id="@Model.Organization.Id"><i class="fas fa-users"></i> View Company Profile</button>
+                    </div>
+                    <div class="col-6 text-right">
+                        <button class="btn btn-primary btn-save-profile"><i class="fa fa-save"></i> Save Profile</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 pl-2 pt-2">
+                <div class="row no-gutters">
+                    <div class="col-6 pt-2 d-flex align-items-center justify-content-start">
+                        <strong>Management Systems</strong>
+                    </div>
+                    <div class="col-6 pt-2 text-right">
+                        <button id="btn-add-management-system" class="btn btn-outline-primary"><i class="fa fa-plus"></i> Add</button>
+                    </div>
+                    <div class="col-12 pt-2">
+                        <input type="hidden" id="fld-permission-delete" value="@Model.DeletePermission" />
+                        <table class="table table-bordered" id="tbl-management-system-list">
+                            @if (Model.OrganizationManagementSystems.Count > 0) {
+                                foreach (var a in Model.OrganizationManagementSystems) {
+                                    <tr>
+                                        <td class="align-middle"><strong>@a.Type</strong></td>
+                                        <td class="align-middle">@a.Version</td>
+                                        <td class="align-middle">@a.Description</td>
+                                        <td class="w-10">
+                                            <div class="btn-group" role="group">
+                                                <a href="javascript:void(0);" class="btn btn-sm btn-secondary btn-edit-management-system" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                                <a href="javascript:void(0);" class="btn btn-sm btn-danger btn-delete-management-system" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            } else {
+                                <tr>
+                                    <td colspan="4">No records found</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                    <div class="col-6 pt-2">
+                        <strong>Subsidiaries</strong>
+                    </div>
+                    <div class="col-6 pt-2 text-right">
+                        <button id="btn-add-subsidiary" class="btn btn-outline-primary"><i class="fa fa-plus"></i> Add</button>
+                    </div>
+                    <div class="col-12 pt-2">
+                        <table class="table table-bordered">
+                            @if (Model.OrganizationSubsidiaries.Count > 0) {
+                                foreach (var a in Model.OrganizationSubsidiaries) {
+                                    <tr>
+                                        <td>
+                                            @a.Name<br />
+                                            <small>@a.Description</small>
+                                        </td>
+                                        <td class="align-middle">
+                                            @a.Address
+                                        </td>
+                                        <td class="w-10">
+                                            <div class="btn-group" role="group">
+                                                <a href="javascript:void(0);" class="btn btn-sm btn-secondary btn-edit-subsidiary" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                                <a href="javascript:void(0);" class="btn btn-sm btn-danger btn-delete-subsidiary" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            } else {
+                                <tr>
+                                    <td colspan="3">No records found</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                    <div class="col-6 pt-2">
+                        <strong>Products</strong>
+                    </div>
+                    <div class="col-6 pt-2 text-right">
+                        <button id="btn-add-product" class="btn btn-outline-primary"><i class="fa fa-plus"></i> Add</button>
+                    </div>
+                    <div class="col-12 pt-2">
+                        <table class="table table-bordered">
+                            @if (Model.OrganizationProducts.Count > 0) {
+                                foreach (var a in Model.OrganizationProducts) {
+                                    <tr>
+                                        <td>
+                                            @a.Name<br />
+                                            <small>@a.Description</small>
+                                        </td>
+                                        <td class="w-10">
+                                            <div class="btn-group" role="group">
+                                                <a href="javascript:void(0);" class="btn btn-sm btn-secondary btn-edit-product" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                                <a href="javascript:void(0);" class="btn btn-sm btn-danger btn-delete-product" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            } else {
+                                <tr>
+                                    <td colspan="3">No records found</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                    <div class="col-6 pt-2">
+                        <strong>Services</strong>
+                    </div>
+                    <div class="col-6 pt-2 text-right">
+                        <button id="btn-add-service" class="btn btn-outline-primary"><i class="fa fa-plus"></i> Add</button>
+                    </div>
+                    <div class="col-12 pt-2">
+                        <table class="table table-bordered">
+                            @if (Model.OrganizationServices.Count > 0) {
+                                foreach (var a in Model.OrganizationServices) {
+                                    <tr>
+                                        <td>
+                                            @a.Name<br />
+                                            <small>@a.Description</small>
+                                        </td>
+                                        <td class="w-10">
+                                            <div class="btn-group" role="group">
+                                                <a href="javascript:void(0);" class="btn btn-sm btn-secondary btn-edit-service" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                                <a href="javascript:void(0);" class="btn btn-sm btn-danger btn-delete-service" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            } else {
+                                <tr>
+                                    <td colspan="3">No records found</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-vmv" role="tabpanel" aria-labelledby="nav-vmv-tab">
+        <div class="row no-gutters f12">
+            <div class="col-6">
+                <div class="row no-gutters dv-vision">
+                    <div class="col-12 pt-2">
+                        <strong>Vision</strong><br />
+                        <input type="hidden" name="OrganizationId" data-required="true" value="@Model.Organization.Id" />
+                        <textarea type="text" class="form-control fld-editor" data-required="true" name="Vision" rows="7">@Model.OrganizationVision.Vision</textarea>
+                    </div>
+                    <div class="col-12 pt-2">
+                        <strong>Mission</strong><br />
+                        <textarea type="text" class="form-control fld-editor" data-required="true" name="Mission" rows="7">@Model.OrganizationVision.Mission</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 pl-2">
+                <div class="row no-gutters">
+                    <div class="col-6 d-flex align-items-center justify-content-start">
+                        <strong>Values</strong>
+                    </div>
+                    <div class="col-6 pt-2 text-right">
+                        <button id="btn-add-value" class="btn btn-outline-primary"><i class="fa fa-plus"></i> Add</button>
+                    </div>
+                    <div class="col-12 pt-2">
+                        <table class="table table-bordered tbl-values-list">
+                            @if (Model.OrganizationValues.Count > 0) {
+                                foreach (var a in Model.OrganizationValues) {
+                                    <tr>
+                                        <td>
+                                            @a.Name<br />
+                                            <small>@a.Description</small>
+                                        </td>
+                                        <td class="w-10">
+                                            <div class="btn-group" role="group">
+                                                <a href="javascript:void(0);" class="btn btn-sm btn-secondary btn-edit-value" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                                <a href="javascript:void(0);" class="btn btn-sm btn-danger btn-delete-value" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            } else {
+                                <tr>
+                                    <td>No records found</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 pt-2 text-right pb-4">
+                <button class="btn btn-primary" id="btn-save-vision"><i class="fa fa-save"></i> Save Vision / Mission</button>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-pao" role="tabpanel" aria-labelledby="nav-pao-tab">
+        <div class="row no-gutters">
+            <div class="col-12 pt-2">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <div class="row">
+                            <div class="col-6 text-left">
+                                Policy And Objectives
+                            </div>
+                            <div class="col-6">
+                                <button id="btn-new-policy" class="btn btn-primary fa-pull-right"><i class="fa fa-plus"></i> New Policy and Objectives</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <small>
+                                <table class="table table-bordered" id="tbl-policy" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{ if (Model.OrganizationPolicies.Count > 0) {
+                                                var cr = 0;
+                                                foreach (var a in Model.OrganizationPolicies) {
+                                                    cr++;
+                                                    <tr>
+                                                        <td class="align-middle text-center w-5">@cr</td>
+                                                        <td>
+                                                            @a.Name <br />
+                                                            <small>@a.Description</small>
+                                                        </td>
+                                                        <td class="w-10 text-center">
+                                                            <div class="btn-group" role="group">
+                                                                <a href="javascript:void(0);" class="btn btn-secondary btn-edit-policy" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                                                <a href="javascript:void(0);" class="btn btn-danger btn-delete-policy" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+
+
+                                        }
+                                    </tbody>
+                                </table>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-oc" role="tabpanel" aria-labelledby="nav-oc-tab">
+        <div class="row no-gutters">
+            <div class="col-12 pt-2">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <div class="row">
+                            <div class="col-6 text-left">
+                                Organizational Chart
+                            </div>
+                            <div class="col-6">
+                                <button id="btn-upload-org-chart" class="btn btn-outline-primary fa-pull-right"><i class="fa fa-file-upload"></i> Upload</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <small>
+                                <table class="table table-bordered" id="tbl-oc" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">#</th>
+                                            <th>File name</th>
+                                            <th>Date Uploaded</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            var ctr = 0;
+                                            foreach (var a in Model.OrganizationCharts) {
+                                                ctr++;
+                                                <tr>
+                                                    <td class="align-middle text-center w-5">@ctr</td>
+                                                    <td class="align-middle"><a href="~/Content/files/@a.UniqueFileName" target="_blank">@a.OriginalFileName</a></td>
+                                                    <td class="w-10 align-middle">@a.CreatedAt.ToShortDateString()</td>
+                                                    <td class="w-10 text-center">
+                                                        <div class="btn-group" role="group">
+                                                            <a href="javascript:void(0);" class="btn btn-danger btn-delete-oc" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-cr" role="tabpanel" aria-labelledby="nav-cr-tab">
+        <div class="row no-gutters">
+            <div class="col-12 pt-2">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <div class="row">
+                            <div class="col-6 text-left">
+                                <button id="btn-obligations" class="btn btn-primary btn-view-compliance" data-table="tbl-obligations">Obligations</button>
+                                <button id="btn-certificates" class="btn btn-outline-primary btn-view-compliance" data-table="tbl-certificates">Certificates</button>
+                            </div>
+                            <div class="col-6">
+                                <button id="btn-add-obligation" class="btn btn-sm btn-primary fa-pull-right btn-compliance"><i class="fa fa-plus"></i> Add Obligation</button>
+                                <button id="btn-add-certification" class="btn btn-sm btn-primary fa-pull-right d-none btn-compliance"><i class="fa fa-plus"></i> Add Certification</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive tbl" id="tbl-obligations">
+                            <small>
+                                <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Issued Date</th>
+                                            <th>Expiration Date</th>
+                                            <th>Document Type</th>
+                                            <th>File Uploaded</th>
+                                            <th>Issuing Authority</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.OrganizationCompliances.Count > 0) {
+                                            foreach (var a in Model.OrganizationCompliances) {
+                                                <tr>
+                                                    <td>@a.Name</td>
+                                                    <td class="vw-date">@a.IssuedDate.ToShortDateString()</td>
+                                                    <td class="vw-date">@a.ExpirationDate.ToShortDateString()</td>
+                                                    <td>@a.DocumentTypeName</td>
+                                                    <td><a href="~/Content/files/@a.ObligationUniqueFileName" target="_blank">@a.ObligationOriginalFileName</a></td>
+                                                    <td>@a.IssuingAuthority</td>
+                                                    <td class="w-10 text-center">
+                                                        <div class="btn-group" role="group">
+                                                            <a href="javascript:void(0);" class="btn btn-secondary btn-edit-obligation" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                                            <a href="javascript:void(0);" class="btn btn-danger btn-delete-obligation" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </small>
+                        </div>
+                        <div class="table-responsive tbl d-none" id="tbl-certificates">
+                            <small>
+                                <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Issued Date</th>
+                                            <th>Expiration Date</th>
+                                            <th>File Uploaded</th>
+                                            <th>Management System</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.OrganizationComplianceCertificates.Count > 0) {
+                                            foreach (var a in Model.OrganizationComplianceCertificates) {
+                                                <tr>
+                                                    <td>@a.Name</td>
+                                                    <td class="text-right">@a.IssuedDate.ToShortDateString()</td>
+                                                    <td class="text-right">@a.ExpirationDate.ToShortDateString()</td>
+                                                    <td><a href="~/Content/files/@a.CertificateUniqueFileName" target="_blank">@a.CertificateOriginalFileName</a></td>
+                                                    <td>@a.ManagementSystemType</td>
+                                                    <td class="w-10 text-center">
+                                                        <div class="btn-group" role="group">
+                                                            <a href="javascript:void(0);" class="btn btn-secondary btn-edit-certificate" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                                            <a href="javascript:void(0);" class="btn btn-danger btn-delete-certificate" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-bpm" role="tabpanel" aria-labelledby="nav-bpm-tab">
+
+        <div class="row no-gutters f12">
+            <div class="col-12 pt-2">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <div class="row">
+                            <div class="col-6 text-left">
+                                Business Process Management
+                            </div>
+                            <div class="col-6">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row no-gutters">
+                            <div class="col-3">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered f12" id="tbl-list" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th class="align-middle">Name</th>
+                                                <th class="w-5"><button id="btn-add-bpm" class="btn btn-outline-primary f12 btn-sm"><i class="fa fa-plus"></i></button></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.OrganizationBusinessProcesses.Count > 0) {
+                                                foreach (var a in Model.OrganizationBusinessProcesses) {
+                                                    <tr class="tr-bpm" data-id="@a.Id">
+                                                        <td colspan="2">@a.Name</td>
+                                                    </tr>
+                                                }
+                                            } else {
+                                                <tr>
+                                                    <td colspan="2">No records found</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-9 pl-2">
+                                <div class="row no-gutters">
+                                    <div class="col-12">
+                                        <table id="tbl-bpm" class="table table-bordered d-none">
+                                            <tr>
+                                                <td class="w-25 align-middle"><strong>Name</strong></td>
+                                                <td class="text-left align-middle td-process-name">Hiring Process</td>
+                                                <td class="w-5 align-middle">
+                                                    <input type="hidden" id="hdn-edit-bpm-id" />
+                                                    <button id="btn-edit-bpm" class="btn btn-outline-primary f12 btn-sm"><i class="fa fa-pen"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="align-middle"><strong>Department</strong></td>
+                                                <td class="text-left align-middle td-department"></td>
+                                                <td class="w-5 align-middle"><button id="btn-edit-bpm-department" class="btn btn-outline-primary f12 btn-sm"><i class="fa fa-pen"></i></button></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="align-top"><strong>Steps</strong></td>
+                                                <td class="text-left">
+                                                    <ul class="ul-steps">
+                                                    </ul>
+                                                </td>
+                                                <td class="w-5"><button id="btn-edit-bpm-steps" class="btn btn-outline-primary f12 btn-sm"><i class="fa fa-pen"></i></button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Interacting Departments</strong></td>
+                                                <td>
+                                                    <div class="row dv-interacting-departments">
+                                                    </div>
+                                                </td>
+                                                <td class="w-5 align-top"><button id="btn-edit-bpm-interacting-department" class="btn btn-outline-primary f12 btn-sm"><i class="fa fa-pen"></i></button></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Sub Process</strong></td>
+                                                <td>
+                                                    <ul class="ul-sub-process">
+                                                    </ul>
+                                                </td>
+                                                <td class="w-5"><button id="btn-edit-bpm-sub-process" class="btn btn-outline-primary f12 btn-sm"><i class="fa fa-pen"></i></button></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-oc-upload" tabindex="-1" role="dialog" aria-labelledby="mdl-new-oc-upload" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Upload New Organizational Chart</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new-oc-upload">
+                <div class="row no-gutters">
+                    <div class="col-6">
+                        <strong>Uploaded file:</strong>
+                        <label class="lbl-file-uploaded" style="margin-bottom:0px !important;"></label><br />
+                        <strong>File name:</strong>
+                        <label class="lbl-oc-file" style="margin-bottom:0px !important;"></label>
+
+                        <input type="hidden" id="fld-oc-file-name" name="UniqueFileName" data-required="true" />
+                        <input type="hidden" id="fld-oc-original-file-name" name="OriginalFileName" data-required="true" />
+                    </div>
+                    <div class="col-6 pl-1">
+                        <progress id="file-uploadphoto-progress" style="display:none;" max="100" value="0"></progress>
+                        <form id="frm-photo-uploader">
+                            <div class="dv-uploader input-group ">
+                                <div class="custom-file">
+                                    <input type="file" name="file" class="custom-file-input f12" id="fle-photo-upload">
+                                    <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="dv-viewer">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-oc-upload-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-oc-upload-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-management-system" tabindex="-1" role="dialog" aria-labelledby="mdl-new-management-system" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">New Management System</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new-management-system">
+                <input type="hidden" id="fld-new-organization-id" name="OrganizationId" data-required="true" value="@Model.Organization.Id" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Type</label><br />
+                        <input type="text" class="form-control" id="fld-new-management-system-type" name="Type" data-required="true" placeholder="Type" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Version</label><br />
+                        <input type="text" class="form-control" id="fld-new-management-system-version" name="Version" data-required="true" placeholder="Version" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-new-management-system-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-management-system-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-management-system-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-management-system" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-management-system" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Management System</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit-management-system">
+                <input type="hidden" id="fld-edit-organization-id" name="OrganizationId" data-required="true" value="@Model.Organization.Id" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label><br />
+                        <input type="hidden" id="fld-edit-management-system-id" name="Id" data-required="true" />
+                        <input type="text" class="form-control" id="fld-edit-management-system-type" name="Type" data-required="true" placeholder="Type" />
+                    </div>
+                    <div class="col-12 ">
+                        <label>Version</label><br />
+                        <input type="text" class="form-control" id="fld-edit-management-system-version" name="Version" data-required="true" placeholder="Version" />
+                    </div>
+                    <div class="col-12 ">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-edit-management-system-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-management-system-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-management-system-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-subsidiary" tabindex="-1" role="dialog" aria-labelledby="mdl-new-subsidiary" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">New Subsidiary</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new-subsidiary">
+                <input type="hidden" id="fld-new-organization-id" name="OrganizationId" data-required="true" value="@Model.Organization.Id" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label><br />
+                        <input type="text" class="form-control" id="fld-new-subsidiary-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Address</label><br />
+                        <input type="text" class="form-control" id="fld-new-subsidiary-address" name="Address" data-required="true" placeholder="Address" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-new-subsidiary-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-subsidiary-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-subsidiary-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-subsidiary" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-subsidiary" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Subsidiary</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit-subsidiary">
+                <input type="hidden" id="fld-organization-id" name="OrganizationId" data-required="true" value="@Model.Organization.Id" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label><br />
+                        <input type="hidden" id="fld-edit-subsidiary-id" name="Id" data-required="true" />
+                        <input type="text" class="form-control" id="fld-edit-subsidiary-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Address</label><br />
+                        <input type="text" class="form-control" id="fld-edit-subsidiary-address" name="Address" data-required="true" placeholder="Address" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-edit-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-subsidiary-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-subsidiary-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-product" tabindex="-1" role="dialog" aria-labelledby="mdl-new-product" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">New Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new-product">
+                <input type="hidden" id="fld-new-organization-id" name="OrganizationId" data-required="true" value="@Model.Organization.Id" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label><br />
+                        <input type="text" class="form-control" id="fld-new-product-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-new-product-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-product-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-product-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-product" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-product" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit-product">
+                <input type="hidden" id="fld-organization-id" name="OrganizationId" data-required="true" value="@Model.Organization.Id" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label><br />
+                        <input type="hidden" name="Id" data-required="true" id="fld-edit-product-id" />
+                        <input type="text" class="form-control" id="fld-edit-product-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-edit-product-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-product-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-product-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-service" tabindex="-1" role="dialog" aria-labelledby="mdl-new-service" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">New Service</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new-service">
+                <input type="hidden" id="fld-new-organization-id" name="OrganizationId" data-required="true" value="@Model.Organization.Id" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label><br />
+                        <input type="text" class="form-control" id="fld-new-service-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-new-service-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-service-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-service-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-service" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-product" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Service</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit-service">
+                <input type="hidden" id="fld-organization-id" name="OrganizationId" data-required="true" value="@Model.Organization.Id" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label><br />
+                        <input type="hidden" id="fld-edit-service-id" data-required="true" name="Id" />
+                        <input type="text" class="form-control" id="fld-edit-service-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-edit-service-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-service-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-service-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-value" tabindex="-1" role="dialog" aria-labelledby="mdl-new-value" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">New Values</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new-value">
+                <input type="hidden" id="fld-new-organization-vision-id" name="OrganizationVisionId" value="@Model.OrganizationVision.Id" data-required="true" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label><br />
+                        <input type="text" class="form-control" id="fld-new-value-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-new-value-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-value-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-value-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-value" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-value" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Values</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit-value">
+                <input type="hidden" id="fld-edit-organization-vision-id" name="OrganizationVisionId" value="@Model.OrganizationVision.Id" data-required="true" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label><br />
+                        <input type="hidden" id="fld-edit-value-id" data-required="true" name="Id" />
+                        <input type="text" class="form-control" id="fld-edit-value-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-edit-value-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-value-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-value-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-obligation" tabindex="-1" role="dialog" aria-labelledby="mdl-new-obligation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">New Obligation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new-obligation">
+                <input type="hidden" id="fld-new-organization-id" name="OrganizationId" value="@Model.Organization.Id" data-required="true" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label><br />
+                        <input type="text" class="form-control" id="fld-new-obligation-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-6 pt-2">
+                        <label>Issued Date</label><br />
+                        <input type="text" class="form-control fld-date" id="fld-new-obligation-issued-date" name="IssuedDate" data-required="true" placeholder="Issued Date" />
+                    </div>
+                    <div class="col-6 pt-2 pl-2">
+                        <label>Expiration Date</label><br />
+                        <input type="text" class="form-control fld-date" id="fld-new-obligation-expiration-date" name="ExpirationDate" data-required="true" placeholder="Expiration Date" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Issuing Authority</label><br />
+                        <input type="text" class="form-control" id="fld-new-obligation-issuing-authority" name="IssuingAuthority" data-required="true" placeholder="Issuing Authority" />
+                    </div>
+                    <div class="col-6 pt-2">
+                        <label>Document Type</label><br />
+                        <select class="fld-document-types"></select>
+                        <input type="hidden" id="fld-selected-document-type-name" name="DocumentTypeName" data-required="true" />
+                        <input type="hidden" id="fld-selected-document-type-id" name="DocumentTypeId" data-required="true" />
+                    </div>
+                    <div class="col-6 pt-2 pl-2">
+                        <label>Category</label><br />
+                        <input type="text" class="form-control" id="fld-new-obligation-category" name="Category" data-required="true" placeholder="Category" />
+                    </div>
+                    <div class="col-6 pt-2">
+                        <label>Department Responsible</label><br />
+                        <select class="fld-department-responsible"></select>
+                        <input type="hidden" id="fld-selected-department-name" name="ResponsibleDepartmentName" data-required="true" />
+                        <input type="hidden" id="fld-selected-department-id" name="ResponsibleDepartmentId" data-required="true" />
+                    </div>
+                    <div class="col-6 pt-2 pl-2">
+                        <label>Department Accessible</label><br />
+                        <select class="fld-department-accessible" multiple></select>
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>File Upload</label><br />
+                        <button class="btn btn-outline-primary btn-obligation-upload"><i class="fa fa-upload"></i> Upload</button>
+                        <label>File name:</label>
+                        <label class="lbl-obligation-file ml-1">no file uploaded.</label>
+                        <input type="hidden" id="fld-obligation-file-name" name="ObligationUniqueFileName" />
+                        <input type="hidden" id="fld-obligation-original-file-name" name="ObligationOriginalFileName" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Subsidiary Name</label><br />
+                        <select class="fld-subsidiaries"></select>
+                        <input type="hidden" id="fld-selected-subsidiary-name" name="SubsidiaryName" data-required="true" />
+                        <input type="hidden" id="fld-selected-subsidiary-id" name="SubsidiaryId" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-new-obligation-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-obligation-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-obligation-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-obaligation" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-obaligation" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Obligation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit-obligation">
+                <input type="hidden" id="fld-edit-organization-id" name="OrganizationId" value="@Model.Organization.Id" data-required="true" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label><br />
+                        <input type="hidden" id="fld-edit-obligation-id" name="Id" data-required="true" />
+                        <input type="text" class="form-control" id="fld-edit-obligation-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-6 pt-2">
+                        <label>Issued Date</label><br />
+                        <input type="text" class="form-control fld-date" id="fld-edit-obligation-issued-date" name="IssuedDate" data-required="true" placeholder="Issued Date" />
+                    </div>
+                    <div class="col-6 pt-2 pl-2">
+                        <label>Expiration Date</label><br />
+                        <input type="text" class="form-control fld-date" id="fld-edit-obligation-expiration-date" name="ExpirationDate" data-required="true" placeholder="Expiration Date" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Issuing Authority</label><br />
+                        <input type="text" class="form-control" id="fld-edit-obligation-issuing-authority" name="IssuingAuthority" data-required="true" placeholder="Issuing Authority" />
+                    </div>
+                    <div class="col-6 pt-2">
+                        <label>Document Type</label><br />
+                        <select class="fld-edit-document-types"></select>
+                        <input type="hidden" id="fld-selected-edit-document-type-name" name="DocumentTypeName" data-required="true" />
+                        <input type="hidden" id="fld-selected-edit-document-type-id" name="DocumentTypeId" data-required="true" />
+                    </div>
+                    <div class="col-6 pt-2 pl-2">
+                        <label>Category</label><br />
+                        <input type="text" class="form-control" id="fld-edit-obligation-category" name="Category" data-required="true" placeholder="Category" />
+                    </div>
+                    <div class="col-6 pt-2">
+                        <label>Department Responsible</label><br />
+                        <select class="fld-edit-department-responsible"></select>
+                        <input type="hidden" id="fld-selected-edit-department-name" name="ResponsibleDepartmentName" data-required="true" />
+                        <input type="hidden" id="fld-selected-edit-department-id" name="ResponsibleDepartmentId" data-required="true" />
+                    </div>
+                    <div class="col-6 pt-2 pl-2">
+                        <label>Department Accessible</label><br />
+                        <select class="fld-edit-department-accessible" multiple></select>
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>File Upload</label><br />
+                        <button class="btn btn-outline-primary btn-edit-obligation-upload"><i class="fa fa-upload"></i> Upload</button>
+                        <label>File name:</label>
+                        <label class="lbl-edit-obligation-file ml-1">no file uploaded.</label>
+                        <input type="hidden" id="fld-edit-obligation-file-name" name="ObligationUniqueFileName" />
+                        <input type="hidden" id="fld-edit-obligation-original-file-name" name="ObligationOriginalFileName" />
+                    </div>  
+                    <div class="col-12 pt-2">
+                        <label>Subsidiary Name</label><br />
+                        <select class="fld-edit-subsidiaries"></select>
+                        <input type="hidden" id="fld-selected-edit-subsidiary-name" name="SubsidiaryName" data-required="true" />
+                        <input type="hidden" id="fld-selected-edit-subsidiary-id" name="SubsidiaryId" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-edit-obligation-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-obligation-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-obligation-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-bpm" tabindex="-1" role="dialog" aria-labelledby="mdl-new-bpm" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Business Process Management</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new-bpm">
+                <input type="hidden" id="fld-new-organization-id" name="OrganizationId" value="@Model.Organization.Id" data-required="true" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label>
+                        <input type="text" class="form-control" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-bpm-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-bpm-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-bpm" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-bpm" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Business Process Management Name</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit-bpm">
+                <input type="hidden" id="fld-edit-organization-id" name="OrganizationId" value="@Model.Organization.Id" data-required="true" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label>
+                        <input type="hidden" data-required="true" id="fld-edit-bpm-id" name="Id" />
+                        <input type="text" class="form-control" id="fld-edit-bpm-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-bpm-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-bpm-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-bpm-department" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-bpm-department" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Business Process Management Department</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit-department-bpm">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label>
+                        <select class="fld-edit-departments"></select>
+                        <input type="hidden" data-required="true" id="fld-edit-department-bpm-id" name="Id" />
+                        <input type="hidden" id="fld-edit-department-process-name" data-required="true" name="DepartmentName" />
+                        <input type="hidden" id="fld-edit-department-process-id" data-required="true" name="DepartmentId" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-department-bpm-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-department-bpm-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-bpm-steps" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-bpm-steps" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Business Process Management Steps</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-edit-step-bpm">
+                <div class="row no-gutters">
+                    <div class="col-8">
+                        <input type="text" class="form-control" id="fld-edit-department-step-name" name="Name" placeholder="Step" data-required="true" />
+                        <input type="hidden" data-required="true" id="fld-edit-step-bpm-id" name="OrganizationBusinessProcessId" />
+                    </div>
+                    <div class="col-3 pl-1">
+                        <input type="text" class="form-control text-right" id="fld-edit-department-step-order" name="Order" placeholder="Order" data-required="true" />
+                    </div>
+                    <div class="col-1 text-center">
+                        <button class="btn btn-sm btn-outline-primary btn-save-step"><i class="fa fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="row no-gutters pt-2">
+                    <div class="col-12">
+                        <table class="table table-bordered w-100 tbl-steps">
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-step-bpm-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-bpm-interacting-department" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-bpm-interacting-department" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit BPM Interacting Departments</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-edit-interacting-department-bpm">
+                <div class="row no-gutters">
+                    <div class="col-11">
+                        <select class="fld-interacting-departments"></select>
+                        <input type="hidden" data-required="true" id="fld-edit-interacting-department-id" name="DepartmentId" />
+                        <input type="hidden" data-required="true" id="fld-edit-interacting-department-name" name="DepartmentName" />
+                        <input type="hidden" data-required="true" id="fld-edit-interacting-department-bpm-id" name="OrganizationBusinessProcessId" />
+                    </div>
+                    <div class="col-1 text-center">
+                        <button class="btn btn-sm btn-outline-primary btn-save-interacting-department" style="margin-top: 1px;"><i class="fa fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="row no-gutters pt-2">
+                    <div class="col-12">
+                        <table class="table table-bordered w-100 tbl-interacting-departments">
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-step-bpm-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-bpm-sub-process" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-bpm-sub-process" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Sub Processes</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-edit-sub-process-bpm">
+                <div class="row no-gutters">
+                    <div class="col-11">
+                        <select class="fld-sub-process"></select>
+                        <input type="hidden" data-required="true" id="fld-edit-sub-process-id" name="OrganizationBusinessProcessSubProcessId" />
+                        <input type="hidden" data-required="true" id="fld-edit-sub-process-name" name="OrganizationBusinessProcessSubProcessName" />
+                        <input type="hidden" data-required="true" id="fld-edit-sub-process-bpm-id" name="OrganizationBusinessProcessId" />
+                    </div>
+                    <div class="col-1 text-center">
+                        <button class="btn btn-sm btn-outline-primary btn-save-sub-process" style="margin-top: 1px;"><i class="fa fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="row no-gutters pt-2">
+                    <div class="col-12">
+                        <table class="table table-bordered w-100 tbl-sub-process">
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-sub-process-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-certificate" tabindex="-1" role="dialog" aria-labelledby="mdl-new-certificate" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">New Certificate</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new-certificate">
+                <input type="hidden" id="fld-new-organization-id" name="OrganizationId" value="@Model.Organization.Id" data-required="true" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label><br />
+                        <input type="text" class="form-control" id="fld-new-certificate-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-6 pt-2">
+                        <label>Issued Date</label><br />
+                        <input type="text" class="form-control fld-date" id="fld-new-certificate-issued-date" name="IssuedDate" data-required="true" placeholder="Issued Date" />
+                    </div>
+                    <div class="col-6 pt-2 pl-2">
+                        <label>Expiration Date</label><br />
+                        <input type="text" class="form-control fld-date" id="fld-new-certificate-expiration-date" name="ExpirationDate" data-required="true" placeholder="Expiration Date" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Scope</label><br />
+                        <input type="text" class="form-control" id="fld-new-certificate-scope" name="Scope" data-required="true" placeholder="Scope" />
+                    </div>
+                    <div class="col-9 pt-2">
+                        <label>Management System Type</label>
+                        <select class="fld-ms-types"></select>
+                        <input type="hidden" name="ManagementSystemType" id="fld-new-ms-type-name" data-required="true" />
+                        <input type="hidden" name="ManagementSystemId" id="fld-new-ms-type-id" data-required="true" />
+                    </div>
+
+                    <div class="col-3 pt-2 pl-2">
+                        <label>Version</label><br />
+                        <input type="text" class="form-control" id="fld-new-certificate-management-system-version" name="ManagementSystemVersion" data-required="true" placeholder="Version" disabled />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Certificate</label><br />
+                        <button class="btn btn-outline-primary btn-certificate-upload"><i class="fa fa-upload"></i> Upload</button>
+                        <label>File name:</label>
+                        <label class="lbl-certificate-file ml-1">no file uploaded.</label>
+                        <input type="hidden" id="fld-certificate-file-name" name="CertificateUniqueFileName" />
+                        <input type="hidden" id="fld-certificate-original-file-name" name="CertificateOriginalFileName" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Department Responsible</label><br />
+                        <select class="fld-certificate-department-responsible"></select>
+                        <input type="hidden" id="fld-selected-certificate-department-name" name="ResponsibleDepartmentName" data-required="true" />
+                        <input type="hidden" id="fld-selected-certificate-department-id" name="ResponsibleDepartmentId" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-new-certificate-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-certificate-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-certificate-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-certificate" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-certificate" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Certificate</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit-certificate">
+                <input type="hidden" id="fld-edit-organization-id" name="OrganizationId" value="@Model.Organization.Id" data-required="true" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label><br />
+                        <input type="hidden" id="fld-edit-certificate-id" name="Id" data-required="true" />
+                        <input type="text" class="form-control" id="fld-edit-certificate-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-6 pt-2">
+                        <label>Issued Date</label><br />
+                        <input type="text" class="form-control fld-date" id="fld-edit-certificate-issued-date" name="IssuedDate" data-required="true" placeholder="Issued Date" />
+                    </div>
+                    <div class="col-6 pt-2 pl-2">
+                        <label>Expiration Date</label><br />
+                        <input type="text" class="form-control fld-date" id="fld-edit-certificate-expiration-date" name="ExpirationDate" data-required="true" placeholder="Expiration Date" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Scope</label><br />
+                        <input type="text" class="form-control" id="fld-edit-certificate-scope" name="Scope" data-required="true" placeholder="Scope" />
+                    </div>
+                    <div class="col-9 pt-2">
+                        <label>Management System Type</label><br />
+                        <select class="fld-edit-ms-types"></select>
+                        <input type="hidden" name="ManagementSystemType" id="fld-edit-ms-type-name" data-required="true" />
+                        <input type="hidden" name="ManagementSystemId" id="fld-edit-ms-type-id" data-required="true" />
+                    </div>
+                    <div class="col-3 pt-2 pl-2">
+                        <label>Version</label><br />
+                        <input type="text" class="form-control" id="fld-edit-certificate-management-system-version" name="ManagementSystemVersion" data-required="true" placeholder="Version" disabled/>
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Certificate</label><br />
+                        <button class="btn btn-outline-primary btn-edit-certificate-upload"><i class="fa fa-upload"></i> Upload</button>
+                        <label>File name:</label>
+                        <label class="lbl-edit-certificate-file ml-1">no file uploaded.</label>
+                        <input type="hidden" id="fld-edit-certificate-file-name" name="CertificateUniqueFileName" />
+                        <input type="hidden" id="fld-edit-certificate-original-file-name" name="CertificateOriginalFileName" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Department Responsible</label><br />
+                        <select class="fld-edit-certificate-department-responsible"></select>
+                        <input type="hidden" id="fld-selected-edit-certificate-department-name" name="ResponsibleDepartmentName" data-required="true" />
+                        <input type="hidden" id="fld-selected-edit-certificate-department-id" name="ResponsibleDepartmentId" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-edit-certificate-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-certificate-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-certificate-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-policy" tabindex="-1" role="dialog" aria-labelledby="mdl-new-policy" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">New Policy</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new-policy">
+                <input type="hidden" id="fld-new-organization-id" name="OrganizationId" data-required="true" value="@Model.Organization.Id" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label><br />
+                        <input type="text" class="form-control" id="fld-new-policy-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-new-policy-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-policy-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-policy-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-policy" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-policy" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Policy</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit-policy">
+                <input type="hidden" id="fld-edit-organization-id" name="OrganizationId" data-required="true" value="@Model.Organization.Id" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label><br />
+                        <input type="hidden" id="fld-edit-policy-id" name="Id" data-required="true" />
+                        <input type="text" class="form-control" id="fld-edit-policy-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-12 ">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-edit-policy-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-policy-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-policy-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-certificate-file-upload">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">File Uploader</h5>
+                <button type="button" id="btn-close" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <progress id="file-new-certificate-upload-progress" style="display:none;" max="100" value="0"></progress>
+                <form id="frm-new-certificate-file-uploader">
+                    <div class="dv-uploader input-group ">
+                        <div class="custom-file">
+                            <input type="hidden" class="fld-user-id" name="userId" />
+                            <input type="file" name="file" class="custom-file-input f12" id="fle-new-certificate-file-upload">
+                            <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                        </div>
+                    </div>
+                </form>
+                <div class="dv-viewer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-obligation-file-upload">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">File Uploader</h5>
+                <button type="button" id="btn-close" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <progress id="file-new-obligation-upload-progress" style="display:none;" max="100" value="0"></progress>
+                <form id="frm-new-obligation-file-uploader">
+                    <div class="dv-uploader input-group ">
+                        <div class="custom-file">
+                            <input type="hidden" class="fld-user-id" name="userId" />
+                            <input type="file" name="file" class="custom-file-input f12" id="fle-new-obligation-file-upload">
+                            <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                        </div>
+                    </div>
+                </form>
+                <div class="dv-viewer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-certificate-file-upload">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">File Uploader</h5>
+                <button type="button" id="btn-close" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <progress id="file-edit-certificate-upload-progress" style="display:none;" max="100" value="0"></progress>
+                <form id="frm-edit-certificate-file-uploader">
+                    <div class="dv-uploader input-group ">
+                        <div class="custom-file">
+                            <input type="hidden" class="fld-user-id" name="userId" />
+                            <input type="file" name="file" class="custom-file-input f12" id="fle-edit-certificate-file-upload">
+                            <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                        </div>
+                    </div>
+                </form>
+                <div class="dv-viewer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-obligation-file-upload">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">File Uploader</h5>
+                <button type="button" id="btn-close" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <progress id="file-edit-obligation-upload-progress" style="display:none;" max="100" value="0"></progress>
+                <form id="frm-edit-obligation-file-uploader">
+                    <div class="dv-uploader input-group ">
+                        <div class="custom-file">
+                            <input type="hidden" class="fld-user-id" name="userId" />
+                            <input type="file" name="file" class="custom-file-input f12" id="fle-edit-obligation-file-upload">
+                            <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                        </div>
+                    </div>
+                </form>
+                <div class="dv-viewer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-permission" tabindex="-1" role="dialog" aria-labelledby="mdl-permission" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Error</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-action">
+                <p class="p-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-alert-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+

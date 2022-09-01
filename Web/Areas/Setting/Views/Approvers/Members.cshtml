@@ -1,0 +1,147 @@
+﻿
+@{
+    ViewBag.Title = "Members";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/js/settings/approvers/members.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@model Web.Areas.Setting.Data.SettingViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-6 text-left">
+                <input type="hidden" id="fld-current-level" value="@Model.ApprovingAuthority.LevelId" />
+                <button id="btn-back" class="btn btn-sm btn-primary"><i class="fa fa-arrow-circle-left"></i> @Model.ApprovingAuthority.GroupName Members</button>
+            </div>
+            <div class="col-6">
+                <button id="btn-add" class="btn btn-sm btn-primary fa-pull-right"><i class="fa fa-plus"></i> Add Member</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <p class="small">Note: Team Lead is required</p>
+            <small>
+                <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th>Members</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var ctr = 0;
+                            foreach (var a in Model.ApprovingAuthorityMembers.OrderBy(a => a.CreatedAt).ToList()) {
+                                ctr++;
+                                <tr>
+                                    <td class="text-center w-5">@ctr</td>
+                                    <td>
+                                        @a.EmployeeName
+                                        <br /><small>@a.EmployeePosition</small>
+                                    </td>
+                                    <td class="w-10 text-center">
+                                        <div class="btn-group" role="group">
+                                            <a href="javascript:void(0)" class="btn btn-secondary btn-edit" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                            <a href="javascript:void(0)" class="btn btn-danger btn-delete" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </small>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new" tabindex="-1" role="dialog" aria-labelledby="mdl-new" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">New Member</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Member</label><br />
+                        <select class="fld-new-members"></select>
+                        <input type="hidden" name="ApprovingAuthorityId" data-required="true" value="@Model.ApprovingAuthority.Id" />
+                        <input type="hidden" id="fld-new-employee-id" name="EmployeeId" data-required="true" />
+                        <input type="hidden" id="fld-new-employee-name" name="EmployeeName" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Role</label><br />
+                        <select class="fld-new-roles">
+                            <option value="">-</option>
+                            <option value="Team Lead">Team Lead</option>
+                            <option value="Member">Member</option>
+                        </select>
+                        <input type="hidden" id="fld-new-employee-position" name="EmployeePosition" data-required="true" />
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit" tabindex="-1" role="dialog" aria-labelledby="mdl-edit" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Member</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Member</label><br />
+                        <select class="fld-edit-members"></select>
+                        <input type="hidden" name="ApprovingAuthorityId" data-required="true" value="@Model.ApprovingAuthority.Id" />
+                        <input type="hidden" id="fld-edit-id" name="Id" data-required="true" />
+                        <input type="hidden" id="fld-edit-employee-id" name="EmployeeId" data-required="true" />
+                        <input type="hidden" id="fld-edit-employee-name" name="EmployeeName" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Role</label><br />
+                        <select class="fld-edit-roles">
+                            <option value="">-</option>
+                            <option value="Team Lead">Team Lead</option>
+                            <option value="Member">Member</option>
+                        </select>
+                        <input type="hidden" id="fld-edit-employee-position" name="EmployeePosition" data-required="true" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+

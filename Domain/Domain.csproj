@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{28B6244F-90A4-4BAB-98CE-97514CCF9275}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Domain</RootNamespace>
+    <AssemblyName>Domain</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configurations\ApplicationInitializer.cs" />
+    <Compile Include="Configurations\BPHDbContext.cs" />
+    <Compile Include="Configurations\BPHDbInitializer.cs" />
+    <Compile Include="DTO\FilterDTO.cs" />
+    <Compile Include="DTO\UserEmployeeDTO.cs" />
+    <Compile Include="Enums\ApplicationElement.cs" />
+    <Compile Include="Enums\RoleType.cs" />
+    <Compile Include="Models\ActionPlan.cs" />
+    <Compile Include="Models\Activity.cs" />
+    <Compile Include="Models\ActivityLog.cs" />
+    <Compile Include="Models\AnnualPlan.cs" />
+    <Compile Include="Models\ApprovingAuthority.cs" />
+    <Compile Include="Models\ApprovingAuthorityMember.cs" />
+    <Compile Include="Models\AuditApproval.cs" />
+    <Compile Include="Models\AuditCalendar.cs" />
+    <Compile Include="Models\AuditCategory.cs" />
+    <Compile Include="Models\AuditFinding.cs" />
+    <Compile Include="Models\AuditAuditor.cs" />
+    <Compile Include="Models\AuditOrganizationBusinessProcess.cs" />
+    <Compile Include="Models\AuditOrganizationManagementSystem.cs" />
+    <Compile Include="Models\AuditPlan.cs" />
+    <Compile Include="Models\AuditPlanSupportingDocument.cs" />
+    <Compile Include="Models\AuditProgram.cs" />
+    <Compile Include="Models\AuditPlanAuditor.cs" />
+    <Compile Include="Models\AuditSchedule.cs" />
+    <Compile Include="Models\AuditTeam.cs" />
+    <Compile Include="Models\AuditUniverse.cs" />
+    <Compile Include="Models\BaseModel.cs" />
+    <Compile Include="Models\BusinessRiskType.cs" />
+    <Compile Include="Models\City.cs" />
+    <Compile Include="Models\CompetencyType.cs" />
+    <Compile Include="Models\ControlNumber.cs" />
+    <Compile Include="Models\Country.cs" />
+    <Compile Include="Models\CountryStateRegion.cs" />
+    <Compile Include="Models\Customer.cs" />
+    <Compile Include="Models\Department.cs" />
+    <Compile Include="Models\Division.cs" />
+    <Compile Include="Models\DocumentClassification.cs" />
+    <Compile Include="Models\DocumentLog.cs" />
+    <Compile Include="Models\DocumentRequestApproval.cs" />
+    <Compile Include="Models\DocumentQualification.cs" />
+    <Compile Include="Models\DocumentRequest.cs" />
+    <Compile Include="Models\DocumentCategory.cs" />
+    <Compile Include="Models\DocumentGroup.cs" />
+    <Compile Include="Models\DocumentRequestComment.cs" />
+    <Compile Include="Models\DocumentRequestCommentAttachment.cs" />
+    <Compile Include="Models\DocumentRequestExternalDocument.cs" />
+    <Compile Include="Models\DocumentRequestForm.cs" />
+    <Compile Include="Models\DocumentRequestSupportingDocument.cs" />
+    <Compile Include="Models\DocumentSection.cs" />
+    <Compile Include="Models\DocumentSetting.cs" />
+    <Compile Include="Models\DocumentsForChangeRequests.cs" />
+    <Compile Include="Models\DocumentsForChangeRequestsApproval.cs" />
+    <Compile Include="Models\DocumentsForChangeRequestsComment.cs" />
+    <Compile Include="Models\DocumentsForChangeRequestsCommentAttachment.cs" />
+    <Compile Include="Models\DocumentsForChangeRequestsSupportingDocument.cs" />
+    <Compile Include="Models\Employee.cs" />
+    <Compile Include="Models\EmployeeAuditee.cs" />
+    <Compile Include="Models\EmployeeAuditor.cs" />
+    <Compile Include="Models\EmployeeCompetency.cs" />
+    <Compile Include="Models\EmployeeContactDetail.cs" />
+    <Compile Include="Models\EmployeeDocument.cs" />
+    <Compile Include="Models\EmployeeEducation.cs" />
+    <Compile Include="Models\EmployeeExperience.cs" />
+    <Compile Include="Models\EmployeeJobDescription.cs" />
+    <Compile Include="Models\EmployeeKPI.cs" />
+    <Compile Include="Models\EmployeePosition.cs" />
+    <Compile Include="Models\EmployeeProgram.cs" />
+    <Compile Include="Models\EmployeeQualification.cs" />
+    <Compile Include="Models\EmployeeReport.cs" />
+    <Compile Include="Models\EmployeeReportRecipient.cs" />
+    <Compile Include="Models\EmployeeRoleAndResponsibility.cs" />
+    <Compile Include="Models\Audit.cs" />
+    <Compile Include="Models\ExternalDocument.cs" />
+    <Compile Include="Models\Form.cs" />
+    <Compile Include="Models\FormGroup.cs" />
+    <Compile Include="Models\FormGroupQuestion.cs" />
+    <Compile Include="Models\FormGroupQuestionOption.cs" />
+    <Compile Include="Models\ISMSRiskRegister.cs" />
+    <Compile Include="Models\IssueCategory.cs" />
+    <Compile Include="Models\IssueTracker.cs" />
+    <Compile Include="Models\IssueType.cs" />
+    <Compile Include="Models\Level.cs" />
+    <Compile Include="Models\Notification.cs" />
+    <Compile Include="Models\Organization.cs" />
+    <Compile Include="Models\OrganizationBusinessProcess.cs" />
+    <Compile Include="Models\OrganizationBusinessProcessInteractingDepartment.cs" />
+    <Compile Include="Models\OrganizationBusinessProcessStep.cs" />
+    <Compile Include="Models\OrganizationBusinessProcessSubProcess.cs" />
+    <Compile Include="Models\OrganizationChart.cs" />
+    <Compile Include="Models\OrganizationCompliance.cs" />
+    <Compile Include="Models\OrganizationComplianceAccessibleDepartment.cs" />
+    <Compile Include="Models\OrganizationComplianceAttachment.cs" />
+    <Compile Include="Models\OrganizationComplianceCertificate.cs" />
+    <Compile Include="Models\OrganizationContext.cs" />
+    <Compile Include="Models\OrganizationContextExternalIssue.cs" />
+    <Compile Include="Models\OrganizationContextInternalIssue.cs" />
+    <Compile Include="Models\OrganizationContextPESTLE.cs" />
+    <Compile Include="Models\OrganizationContextStakeHolder.cs" />
+    <Compile Include="Models\OrganizationContextSWOT.cs" />
+    <Compile Include="Models\OrganizationDashboard.cs" />
+    <Compile Include="Models\OrganizationManagementSystem.cs" />
+    <Compile Include="Models\OrganizationPolicy.cs" />
+    <Compile Include="Models\OrganizationProcess.cs" />
+    <Compile Include="Models\OrganizationProduct.cs" />
+    <Compile Include="Models\OrganizationProfile.cs" />
+    <Compile Include="Models\OrganizationReport.cs" />
+    <Compile Include="Models\OrganizationService.cs" />
+    <Compile Include="Models\OrganizationSubsidiary.cs" />
+    <Compile Include="Models\OrganizationValue.cs" />
+    <Compile Include="Models\OrganizationVision.cs" />
+    <Compile Include="Models\Position.cs" />
+    <Compile Include="Models\PositionResponsibilities.cs" />
+    <Compile Include="Models\ProcessRiskRegister.cs" />
+    <Compile Include="Models\Product.cs" />
+    <Compile Include="Models\PublishedDocuments.cs" />
+    <Compile Include="Models\PublishedDocumentsApproval.cs" />
+    <Compile Include="Models\PublishedDocumentsComment.cs" />
+    <Compile Include="Models\PublishedDocumentsCommentAttachment.cs" />
+    <Compile Include="Models\PublishedDocumentsSupportingDocument.cs" />
+    <Compile Include="Models\Rating.cs" />
+    <Compile Include="Models\Reviewer.cs" />
+    <Compile Include="Models\ReviewerMember.cs" />
+    <Compile Include="Models\RiskAndOpportunityRegister.cs" />
+    <Compile Include="Models\Sale.cs" />
+    <Compile Include="Models\KnowledgeHubStandard.cs" />
+    <Compile Include="Models\SettingEmployeeNotificationRecipient.cs" />
+    <Compile Include="Models\SubmittedForm.cs" />
+    <Compile Include="Repositories\ActionPlanRepository.cs" />
+    <Compile Include="Repositories\ActivityLogRepository.cs" />
+    <Compile Include="Repositories\ActivityRepository.cs" />
+    <Compile Include="Models\Role.cs" />
+    <Compile Include="Models\RoleTemplate.cs" />
+    <Compile Include="Models\Setting.cs" />
+    <Compile Include="Models\Token.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\AnnualPlanRepository.cs" />
+    <Compile Include="Repositories\ApprovingAuthorityMemberRepository.cs" />
+    <Compile Include="Repositories\ApprovingAuthorityRepository.cs" />
+    <Compile Include="Repositories\AuditApprovalRepository.cs" />
+    <Compile Include="Repositories\AuditAuditorRepository.cs" />
+    <Compile Include="Repositories\AuditCalendarRepository.cs" />
+    <Compile Include="Repositories\AuditCategoryRepository.cs" />
+    <Compile Include="Repositories\AuditFindingRepository.cs" />
+    <Compile Include="Repositories\AuditOrganizationBusinessProcessRepository.cs" />
+    <Compile Include="Repositories\AuditOrganizationManagementSystemRepository.cs" />
+    <Compile Include="Repositories\AuditPlanRepository.cs" />
+    <Compile Include="Repositories\AuditPlanSupportingDocumentRepository.cs" />
+    <Compile Include="Repositories\AuditPlanAuditorRepository.cs" />
+    <Compile Include="Repositories\AuditProgramRepository.cs" />
+    <Compile Include="Repositories\AuditScheduleRepository.cs" />
+    <Compile Include="Repositories\AuditTeamsRepository.cs" />
+    <Compile Include="Repositories\AuditUniverseRepository.cs" />
+    <Compile Include="Repositories\BusinessRiskTypeRepository.cs" />
+    <Compile Include="Repositories\CityRepository.cs" />
+    <Compile Include="Repositories\CompetencyTypeRepository.cs" />
+    <Compile Include="Repositories\ControlNumberRepository.cs" />
+    <Compile Include="Repositories\CountryRepository.cs" />
+    <Compile Include="Repositories\CountryStateRegionRepository.cs" />
+    <Compile Include="Repositories\CustomerRepository.cs" />
+    <Compile Include="Repositories\DepartmentRepository.cs" />
+    <Compile Include="Repositories\DivisionRepository.cs" />
+    <Compile Include="Repositories\DocumentCategoryRepository.cs" />
+    <Compile Include="Repositories\DocumentClassificationRepository.cs" />
+    <Compile Include="Repositories\DocumentGroupRepository.cs" />
+    <Compile Include="Repositories\DocumentLogRepository.cs" />
+    <Compile Include="Repositories\DocumentQualificationRepository.cs" />
+    <Compile Include="Repositories\DocumentRequestApprovalRepository.cs" />
+    <Compile Include="Repositories\DocumentRequestCommentAttachmentRepository.cs" />
+    <Compile Include="Repositories\DocumentRequestCommentRepository.cs" />
+    <Compile Include="Repositories\DocumentRequestExternalDocumentRepository.cs" />
+    <Compile Include="Repositories\DocumentRequestFormRepository.cs" />
+    <Compile Include="Repositories\DocumentRequestRepository.cs" />
+    <Compile Include="Repositories\DocumentRequestSupportingDocumentRepository.cs" />
+    <Compile Include="Repositories\DocumentSectionRepository.cs" />
+    <Compile Include="Repositories\DocumentSettingRepository.cs" />
+    <Compile Include="Repositories\DocumentsForChangeRequestsApprovalRepository.cs" />
+    <Compile Include="Repositories\DocumentsForChangeRequestsComment.cs" />
+    <Compile Include="Repositories\DocumentsForChangeRequestsCommentAttachmentRepository.cs" />
+    <Compile Include="Repositories\DocumentsForChangeRequestsRepository.cs" />
+    <Compile Include="Repositories\DocumentsForChangeRequestsSupportingDocumentRepository.cs" />
+    <Compile Include="Repositories\EmployeeAuditeeRepository.cs" />
+    <Compile Include="Repositories\EmployeeAuditorRepository.cs" />
+    <Compile Include="Repositories\EmployeeCompetencyRepository.cs" />
+    <Compile Include="Repositories\EmployeeContactDetailRepository.cs" />
+    <Compile Include="Repositories\EmployeeDocumentRepository.cs" />
+    <Compile Include="Repositories\EmployeeEducationRepository.cs" />
+    <Compile Include="Repositories\EmployeeExperienceRepository.cs" />
+    <Compile Include="Repositories\EmployeeJobDescriptionRepository.cs" />
+    <Compile Include="Repositories\EmployeeKPIRepository.cs" />
+    <Compile Include="Repositories\EmployeePositionRepository.cs" />
+    <Compile Include="Repositories\EmployeeProgramRepository.cs" />
+    <Compile Include="Repositories\EmployeeQualificationRepository.cs" />
+    <Compile Include="Repositories\EmployeeReportRecipientRepository.cs" />
+    <Compile Include="Repositories\EmployeeReportRepository.cs" />
+    <Compile Include="Repositories\EmployeeRepository.cs" />
+    <Compile Include="Repositories\EmployeeRoleAndResponsibilityRepository.cs" />
+    <Compile Include="Repositories\AuditRepository.cs" />
+    <Compile Include="Repositories\ExternalDocumentRepository.cs" />
+    <Compile Include="Repositories\ISMSRiskRegisterRepository.cs" />
+    <Compile Include="Repositories\IssueCategoryRepository.cs" />
+    <Compile Include="Repositories\IssueTrackerRepository.cs" />
+    <Compile Include="Repositories\IssueTypeRepository.cs" />
+    <Compile Include="Repositories\LevelRepository.cs" />
+    <Compile Include="Repositories\Locator\RepositoryFactory.cs" />
+    <Compile Include="Repositories\Locator\RepositoryLocator.cs" />
+    <Compile Include="Repositories\NotificationRepository.cs" />
+    <Compile Include="Repositories\OrganizationBusinessProcessInteractingDepartmentRepository.cs" />
+    <Compile Include="Repositories\OrganizationBusinessProcessRepository.cs" />
+    <Compile Include="Repositories\OrganizationBusinessProcessStepRepository.cs" />
+    <Compile Include="Repositories\OrganizationBusinessProcessSubProcessRepository.cs" />
+    <Compile Include="Repositories\OrganizationChartRepository.cs" />
+    <Compile Include="Repositories\OrganizationComplianceAccessibleDepartmentRepository.cs" />
+    <Compile Include="Repositories\OrganizationComplianceCertificateRepository.cs" />
+    <Compile Include="Repositories\OrganizationComplianceRepository.cs" />
+    <Compile Include="Repositories\OrganizationContextExternalIssueRepository.cs" />
+    <Compile Include="Repositories\OrganizationContextInternalIssueRepository.cs" />
+    <Compile Include="Repositories\OrganizationContextPESTLERepository.cs" />
+    <Compile Include="Repositories\OrganizationContextRepository.cs" />
+    <Compile Include="Repositories\OrganizationContextStakeHolderRepository.cs" />
+    <Compile Include="Repositories\OrganizationContextSWOTRepository.cs" />
+    <Compile Include="Repositories\OrganizationDashboardRepository.cs" />
+    <Compile Include="Repositories\OrganizationManagementSystemRepository.cs" />
+    <Compile Include="Repositories\OrganizationPolicyRepository.cs" />
+    <Compile Include="Repositories\OrganizationProcessRepository.cs" />
+    <Compile Include="Repositories\OrganizationProductRepository.cs" />
+    <Compile Include="Repositories\OrganizationProfileRepository.cs" />
+    <Compile Include="Repositories\OrganizationReportRepository.cs" />
+    <Compile Include="Repositories\OrganizationRepository.cs" />
+    <Compile Include="Repositories\OrganizationServiceRepository.cs" />
+    <Compile Include="Repositories\OrganizationSubsidiaryRepository.cs" />
+    <Compile Include="Repositories\OrganizationValueRepository.cs" />
+    <Compile Include="Repositories\OrganizationVisionRepository.cs" />
+    <Compile Include="Repositories\PositionRepository.cs" />
+    <Compile Include="Repositories\ProcessRiskRegisterRepository.cs" />
+    <Compile Include="Repositories\PublishedDocumentsApprovalRepository.cs" />
+    <Compile Include="Repositories\PublishedDocumentsCommentAttachmentRepository.cs" />
+    <Compile Include="Repositories\PublishedDocumentsCommentRepository.cs" />
+    <Compile Include="Repositories\PublishedDocumentsRepository.cs" />
+    <Compile Include="Repositories\PublishedDocumentSupportingDocumentRepository.cs" />
+    <Compile Include="Repositories\RatingRepository.cs" />
+    <Compile Include="Repositories\ReviewerMemberRepository.cs" />
+    <Compile Include="Repositories\ReviewerRepository.cs" />
+    <Compile Include="Repositories\RiskAndOpportunityRegisterRepository.cs" />
+    <Compile Include="Repositories\RoleRepository.cs" />
+    <Compile Include="Repositories\RoleTemplateRepository.cs" />
+    <Compile Include="Repositories\SaleRepository.cs" />
+    <Compile Include="Repositories\SettingEmployeeNotificationRecipientRepository.cs" />
+    <Compile Include="Repositories\SettingRepository.cs" />
+    <Compile Include="Repositories\KnowledgeHubStandardRepository.cs" />
+    <Compile Include="Repositories\TokenRepository.cs" />
+    <Compile Include="Repositories\UserRepository.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Collections\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Framework\Framework.csproj">
+      <Project>{9fac69dd-ec08-48ea-86a6-4a6fcd959f5b}</Project>
+      <Name>Framework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

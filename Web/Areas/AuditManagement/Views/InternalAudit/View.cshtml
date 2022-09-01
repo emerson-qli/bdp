@@ -1,0 +1,346 @@
+﻿
+@{
+    ViewBag.Title = "Internal Audit";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/js/audit-management/internal-audit/view.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@model Web.Areas.AuditManagement.Data.AuditManagementViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-6">
+                <button id="btn-back" class="btn btn-sm btn-primary"><i class="fa fa-arrow-alt-circle-left"></i> @Model.AuditPlan.Name - Details</button>
+            </div>
+            <div class="col-6 text-right">
+                @if (Model.AuditPlan.Tag == Domain.Models.AuditPlanState.Initiated) {
+                    <button id="btn-approval-submit" data-id="@Model.AuditPlan.Id" class="btn btn-sm btn-success"><i class="far fa-paper-plane"> Submit for Approval</i></button>
+                    <button id="btn-edit" class="btn btn-sm btn-primary"><i class="fa fa-pen"></i> Edit Plan</button>
+                    <button id="btn-add-auditor" class="btn btn-sm btn-primary"><i class="fa fa-user"></i> Add Auditor</button>
+                    <button id="btn-add-schedule" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Add Schedule</button>
+                    <button id="btn-delete" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Delete</button>
+                }
+                @if (Model.AuditApprovals.Where(a => a.AuditorId == Model.Employee.Id && a.Tag == Domain.Models.AuditApprovalState.Initiated).FirstOrDefault() != null) {
+                    <button id="btn-approve-audit-plan-request" data-id="@Model.Employee.Id" data-auditplan-id="@Model.AuditPlan.Id" class="btn btn-sm btn-primary"><i class="far fa-paper-plane"></i> Approve</button>
+                }
+
+            </div>
+        </div>
+    </div>
+    <div class="card-body f12">
+        <div class="row no-gutters">
+            <div class="col-7">
+                <div class="row no-gutters dv-content">
+                    <div class="col">
+                        <div class="ml-2">
+                            <input type="hidden" id="hdn-auditplan-id" name="Id" value="@Model.AuditPlan.Id " />
+                            <strong>@Model.AuditPlan.Name</strong>
+                            <div class="dv-auditplan-date"></div>
+                        </div>
+                    </div>
+                    <div class="col text-right">
+                        <div class="pr-2">
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table table-bordered">
+                    <tr>
+                        <td class="w-25"><strong>Audit Category</strong></td>
+                        <td>@Model.AuditPlan.AuditCategoryName</td>
+                    </tr>
+                    <tr>
+                        <td class="w-25"><strong>Description</strong></td>
+                        <td>@Model.AuditPlan.Description</td>
+                    </tr>
+                    <tr>
+                        <td class="w-25"><strong>Audit Objective</strong></td>
+                        <td>@Model.AuditPlan.Objective</td>
+                    </tr>
+                    <tr>
+                        <td class="w-25"><strong>Audit Criteria</strong></td>
+                        <td>@Model.AuditPlan.Criteria</td>
+                    </tr>
+                    <tr>
+                        <td class="w-25 align-middle"><strong>Auditors</strong></td>
+                        <td>
+                            <ul class="list-group">
+                               
+                                    @foreach (var a in Model.AuditPlanAuditors) { 
+                                    <li class="list-group-item">@a.AuditorName  @if (Model.AuditPlan.Tag == Domain.Models.AuditPlanState.Initiated) {<button class="btn btn-danger btn-sm float-right" id="btn-delete-audit-plan-auditor" data-id="@a.Id"><i class="fa fa-times"></i></button> }</li>
+                                    }
+                                
+                            </ul>
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w-25"><strong>Processes</strong></td>
+                        <td>
+                            <ul class="list-group">
+                                @foreach (var a in Model.AuditOrganizationBusinessProcesses) { 
+                                    <li class="list-group-item">@a.OrganizationBusinessProcessName</li>
+                                }
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="w-25 align-top"><strong>Supporting Files</strong></td>
+                        <td>
+                            <ul class="list-group">
+                         
+                                @foreach (var a in Model.AuditPlanSupportingDocuments) {
+                                <li class="list-group-item"><a target="_blank" href="/content/files/@a.UniqueFileName">@a.OriginalFileName</a> @if (Model.AuditPlan.Tag == Domain.Models.AuditPlanState.Initiated) {<button class="btn btn-danger btn-sm float-right" id="btn-delete-audit-plan-supporting-file" data-id="@a.Id"><i class="fa fa-times"></i></button>}</li>
+                                }
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+                @if (Model.AuditPlan.Tag == Domain.Models.AuditPlanState.Initiated) {
+                <div class="col">
+                    <strong>Upload Files: </strong>
+                    <button class="btn btn-outline-danger btn-sm float-right f12" id="btn-upload-remove"><i class="fa fa-times"></i> Remove All</button>
+                    <button class="btn btn-outline-primary btn-sm float-right f12" id="btn-upload-save"><i class="fa fa-check"></i> Upload All</button>
+                    <button class="btn btn-outline-secondary btn-sm float-right f12" id="btn-upload"><i class="fa fa-upload"></i> Choose files</button>
+                </div>
+                <div class="col">
+                    <small>
+                        <label class="lbl-file mr-2"></label>
+                        <input type="hidden" id="fld-audit-plan-id" name="AuditPlanId" value="@Model.AuditPlan.Id" />
+                        <input type="hidden" id="fld-file-name" name="UniqueFileName" />
+                        <input type="hidden" id="fld-original-file-name" name="OriginalFileName" />
+                    </small>
+                </div>
+                }
+
+
+            </div>
+            <div class="col-5 pl-2">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <div class="row no-gutters dv-content">
+                            <div class="col">
+                                <div class="ml-2">
+                                    <input type="hidden" id="hdn-auditplan-id" name="Id" value="@Model.AuditPlan.Id " />
+                                    <strong>Audit Schedules</strong><br />
+                                    <em><small>@Model.AuditPlan.Name</small></em>
+                                </div>
+                            </div>
+                            <div class="col text-right">
+                                <div class="pr-2">
+
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table table-bordered">
+
+                            @if (Model.AuditSchedules.Count > 0) {
+                                if (Model.AuditPlan.Tag == Domain.Models.AuditPlanState.Initiated) {
+                                    foreach (var a in Model.AuditSchedules) {
+                                        <tr>
+                                            <td class="align-middle">
+                                                <em>@a.StartDate.ToShortDateString() - @a.EndDate.ToShortDateString()</em>
+                                            </td>
+                                            <td class="w-5"><button class="btn btn-danger btn-sm float-right" id="btn-delete-audit-plan-schedule" data-id="@a.Id"><i class="fa fa-times"></i></button></td>
+                                        </tr>
+                                    }
+                                } else {
+                                    foreach (var a in Model.AuditSchedules) {
+                                        <tr>
+                                            <td class="align-middle">
+                                                <em>@a.StartDate.ToShortDateString() - @a.EndDate.ToShortDateString()</em>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            } else {
+                                <tr>
+                                    <td>No scheduled date.</td>
+                                </tr>
+                            }
+
+                        </table>
+                        </div>
+                    <div class="col-12">
+                        @if (Model.AuditApprovals.Count > 0) {
+                            <table class="table table-bordered">
+                                <tr>
+                                    <td><strong>Auditors</strong></td>
+                                </tr>
+                                <tr>
+                                     <td>
+
+                                        <table class="table borderless">
+                                            @foreach (var a in Model.AuditApprovals) {
+
+                                                <tr style="border-bottom: solid 1px #ecebeb">
+                                                    <td>
+                                                        @a.AuditorName<br />
+                                                    </td>
+                                                    <td class="text-center align-middle">
+                                                        <span class="dv-status-display-@a.Tag">@a.Tag</span><br />
+                                                        @if (a.UpdatedAt.HasValue) {
+                                                            <small>@a.UpdatedAt.Value.ToString()</small>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+
+                                    </td>
+                                </tr>
+                            </table>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-audit-plan" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-audit-plan" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Audit Plan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-edit">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Audit</label>
+                        <input type="hidden" id="fld-edit-audit-plan-id" name="Id" value="@Model.AuditPlan.Id " />
+                        <input type="text" name="Name" class="form-control mb-2" id="fld-edit-audit-plan-name" data-required="true" placeholder="-" />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Description</label>
+                        <textarea type="text" name="Description" class="form-control mb-2" id="fld-edit-audit-plan-description" placeholder="-" data-required="true"></textarea>
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Audit Objective</label>
+                        <textarea type="text" name="Objective" class="form-control mb-2" id="fld-edit-audit-plan-objective" placeholder="-" data-required="true"></textarea>
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Audit Criteria</label>
+                        <input type="text" class="form-control mb-2" id="fld-edit-audit-plan-criteria" name="Criteria" data-required="true" placeholder="-" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-audit-plan-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-audit-plan-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-audit-plan-schedule" tabindex="-1" role="dialog" aria-labelledby="mdl-new-audit-plan-schedule" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Audit Schedule</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new-schedule">
+                <div class="row no-gutters">
+                    <div class="col-6">
+                        <label>Start Date</label>
+                        <input type="hidden" id="fld-edit-auditplan-schedule-id" name="Id" value="@Model.AuditPlan.Id " />
+                        <input type="hidden" id="fld-edit-auditplan-schedule-name" name="Name" value="@Model.AuditPlan.Name " />
+                        <input class="form-control mb-3 fld-date" type="text" id="fld-new-auditplan-schedule-start-date" name="StartDate" data-required="true" />
+                    </div>
+                    <div class="col-6 pl-2">
+                        <label>End Date</label>
+                        <input class="form-control mb-3 fld-date" type="text" id="fld-new-auditplan-schedule-end-date" name="EndDate" data-required="true" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-audit-plan-schedule-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-audit-plan-schedule-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-audit-plan-auditors" tabindex="-1" role="dialog" aria-labelledby="mdl-new-audit-plan-auditors" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Audit Auditor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new-auditor">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Auditor</label>
+                        <select class="fld-edit-auditor form-control mb-2"></select>
+                        <input class="form-control" type="hidden" id="fld-selected-audit-name" name="AuditorName" />
+                        <input class="form-control" type="hidden" id="fld-selected-audit-id" name="AuditorId" />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <table class="table table-bordered dv-auditors text-center">
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-audit-plan-auditor-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-audit-plan-auditor-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-file-upload" tabindex="-1" role="dialog" aria-labelledby="mdl-file-upload" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">File Uploader</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-action">
+                <progress id="file-uploadfile-progress" style="display:none;" max="100" value="0"></progress>
+                <form id="frm-file-uploader">
+                    <div class="dv-uploader input-group ">
+                        <div class="custom-file">
+                            <input type="file" name="file" class="custom-file-input f12" id="fle-file-upload">
+                            <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                        </div>
+                    </div>
+                </form>
+                <div class="dv-viewer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

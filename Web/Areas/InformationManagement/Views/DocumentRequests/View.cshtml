@@ -1,0 +1,589 @@
+﻿
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/lib/jquery/jquery-ui.js"></script>
+    <script src="~/Content/lib/trumbowyg/trumbowyg.js"></script>
+    <script src="~/Content/lib/trumbowyg/plugins/table/trumbowyg.table.js"></script>
+    <script src="~/Content/lib/trumbowyg/plugins/fontfamily/trumbowyg.fontfamily.js"></script>
+    <script src="~/Content/lib/trumbowyg/plugins/fontsize/trumbowyg.fontsize.js"></script>
+    <script src="~/Content/lib/trumbowyg/plugins/indent/trumbowyg.indent.js"></script>
+    <script src="~/Content/lib/trumbowyg/plugins/upload/trumbowyg.upload.js"></script>
+    <script src="~/Content/lib/trumbowyg/plugins/colors/trumbowyg.colors.js"></script>
+    <script src="~/Content/lib/trumbowyg/plugins/colors/trumbowyg.colors.js"></script>
+    <script src="~/Content/lib/trumbowyg/plugins/pasteimage/trumbowyg.pasteimage.js"></script>
+    <script src="~/Content/lib/trumbowyg/plugins/resizimg/trumbowyg.resizimg.js"></script>
+    <script src="~/Content/lib/trumbowyg/plugins/resizimg/resizable-resolveconflict.js"></script>
+
+    <script src="~/Content/lib/pdf-object/pdf-object.js"></script>
+    <script src="~/Content/lib/annotator/popper.js"></script>
+    <script src="~/Content/js/information-management/document-requests/view.js"></script>
+    <script src="~/Content/lib/articulate/articulate.js"></script>
+}
+
+@model Web.Areas.InformationManagement.Data.InformationManagementViewModel
+
+@section Styles{
+<link href="~/Content/lib/jquery/jquery-ui.css" rel="stylesheet" />
+    <link href="~/Content/lib/trumbowyg/plugins/table/ui/trumbowyg.table.css" rel="stylesheet">
+    <link href="~/Content/lib/trumbowyg/plugins/colors/ui/trumbowyg.colors.css" rel="stylesheet">
+    <link href="~/Content/lib/trumbowyg/trumbowyg.css" rel="stylesheet" />
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-6">
+                <button id="btn-back" class="btn btn-sm btn-primary"><i class="fa fa-arrow-alt-circle-left"></i> @Model.DocumentRequest.Name - Details</button>
+            </div>
+            <div class="col-6 text-right">
+                @if (Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.Draft || Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.DraftRevision || Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.DraftObsoletion) {
+
+                    <button id="btn-hide-info" class="btn btn-sm btn-outline-primary"><i class="far fa-eye-slash"></i> Hide Info</button>
+                    <button id="btn-show-info" class="btn btn-sm btn-outline-primary d-none"><i class="far fa-eye"></i> Show Info</button>
+                    <button id="btn-update-draft" class="btn btn-sm btn-primary"><i class="far fa-save"></i> Update Draft</button>
+                    <button id="btn-submit" class="btn btn-sm btn-success"><i class="far fa-paper-plane"></i> Submit for Approval</button>
+                } else if (Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.Submit || Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.SubmitRevision || Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.SubmitObsoletion) {
+                    <input type="hidden" id="fld-current-employee-id" value="@Model.Employee.Id" />
+                    if (Model.DocumentRequestApprovals.Where(a => a.EmployeeId == Model.Employee.Id && a.Tag == Domain.Models.DocumentRequestApprovalState.ForApproval).FirstOrDefault() != null) {
+
+                        if (Model.TextEditor != "None") {
+                            <button id="btn-edit-document-request" class="btn btn-sm btn-primary"><i class="fa fa-pen"></i> Annotate</button>
+                            <button id="btn-edit-document-listen" class="btn btn-sm btn-primary"><i class="fas fa-assistive-listening-systems"></i> Listen</button>
+                            <button id="btn-view-document-pdf" class="btn btn-sm btn-primary d-none"><i class="fa fa-pen"></i> Close Annotation</button>
+                        }
+
+                        <button id="btn-approve-document-request" class="btn btn-sm btn-primary"><i class="far fa-paper-plane"></i> Approve</button>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row no-gutters">
+            <div class="col-3" id="document-info">
+                <small>
+                    <table class="table table-bordered mb-2">
+                        <tr>
+                            <td><strong>Name</strong></td>
+                            <td>
+                                @Model.DocumentRequest.Name
+                                <input type="hidden" id="fld-document-request-id" value="@Model.DocumentRequest.Id" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Category</strong></td>
+                            <td>@Model.DocumentRequest.DocumentCategoryName</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Level</strong></td>
+                            <td>@Model.DocumentRequest.LevelName</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Review Period</strong></td>
+                            <td>@Model.DocumentRequest.ReviewPeriod</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Purpose</strong></td>
+                            <td>@Model.DocumentRequest.Purpose</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Prepared By</strong></td>
+                            <td>@Model.DocumentRequest.EmployeeName</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Department</strong></td>
+                            <td>@Model.DocumentRequest.DepartmentName</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Date Prepared</strong></td>
+                            <td>@Model.DocumentRequest.CreatedAt.ToLongDateString()</td>
+                        </tr>
+                        <tr>
+                            <td><strong>MS Type</strong></td>
+                            <td>@Model.DocumentRequest.OrganizationManagementSystemName</td>
+                        </tr>
+                        <tr>
+                            <td class="align-middle"><strong>External Documents</strong></td>
+                            <td>
+                                @foreach (var a in Model.DocumentRequestExternalDocuments) {
+                                    <div class="mr-2"><a target="_blank" href="/content/files/@a.ExternalDocumentUniqueFileName">@a.ExternalDocumentOriginalFileName</a></div>
+                                }
+                                <br />
+                                <small>
+                                    <label class="lbl-file-external mr-2"></label>
+                                    <input type="hidden" id="fld-document-request-id" name="DocumentRequestId" value="@Model.DocumentRequest.Id" />
+                                    <input type="hidden" id="fld-file-name-external" name="ExternalDocumentUniqueFileName" />
+                                    <input type="hidden" id="fld-original-file-name-external" name="ExternalDocumentOriginalFileName" />
+                                </small>
+                                @if (Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.Draft || Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.DraftRevision || Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.DraftObsoletion) {
+                                    <button class="btn btn-outline-primary btn-sm float-right mr-2 mb-2" id="btn-upload-external"><i class="fa fa-upload"></i></button>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="align-middle"><strong>Supporting Files</strong></td>
+                            <td>
+                                @foreach (var a in Model.DocumentRequestSupportingDocuments) {
+                                    <div class="mr-2"><a target="_blank" href="/content/files/@a.UniqueFileName">@a.OriginalFileName</a></div>
+                                }
+                                <br />
+                                <small>
+                                    <label class="lbl-file mr-2"></label>
+                                    <input type="hidden" id="fld-document-request-id" name="DocumentRequestId" value="@Model.DocumentRequest.Id" />
+                                    <input type="hidden" id="fld-file-name" name="UniqueFileName" />
+                                    <input type="hidden" id="fld-original-file-name" name="OriginalFileName" />
+                                </small>
+                                @if (Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.Draft || Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.DraftRevision || Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.DraftObsoletion) {
+                                    <button class="btn btn-outline-primary btn-sm float-right mr-2 mb-2" id="btn-upload"><i class="fa fa-upload"></i></button>
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="table">
+                        <tr>
+                            <td><strong>Comments</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="h-50 f12 p-0">
+                                @foreach (var a in Model.DocumentRequestComments) {
+                                    <p style="border:solid 1px #ecebeb;padding: 5px; border-radius: 10px;">
+                                        <span><strong>@a.CreatedAt.ToLongDateString()</strong></span><br />
+                                        @a.Comment<br /><br />
+                                        @foreach (var b in a.Attachments) {
+                                            <label><a target="_blank" href="/content/files/@b.UniqueFileName">@b.OrginalFileName</a></label><br />
+                                        }
+                                        <span class="fa-pull-right">- @a.EmployeeName</span><br style="clear:both;" />
+                                    </p>
+
+                                }
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right p-0">
+                                <div class="new-comment">
+                                    @if (Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.Draft || Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.DraftRevision) {
+                                        <textarea type="text" class="form-control" name="Comment" data-required="true"></textarea>
+                                    }
+                                    <input type="hidden" name="DocumentRequestId" data-required="true" value="@Model.DocumentRequest.Id" />
+                                    <input type="hidden" name="EmployeeName" data-required="true" value="@Model.Employee.Fullname" />
+                                    <input type="hidden" name="EmployeeId" data-required="true" value="@Model.Employee.Id" />
+                                    <div id="dv-comment-attachments" style="display:contents">
+
+                                    </div>
+                                </div>
+                                <small>
+                                    <label class="lbl-attachment-file mr-2"></label>
+                                    <input type="hidden" id="fld-document-request-id" name="DocumentRequestCommentId" value="" />
+                                    <input type="hidden" id="fld-attachment-file-name" name="UniqueFileName" />
+                                    <input type="hidden" id="fld-attachment-original-file-name" name="OrginalFileName" />
+                                    @if (Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.Draft || Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.DraftRevision) {
+                                        <a href="javascript:void(0)" id="btn-attachment-file"><i class="fa fa-paperclip"></i> Attach File</a>
+                                    }
+                                </small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right">
+                                @if (Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.Draft || Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.DraftRevision) {
+                                    <button class="btn btn-primary" id="btn-send-comment">Send</button>
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </small>
+            </div>
+            <div class="col pl-2 f12">
+                <div class="row no-gutters">
+                    <div class="col-12 pl-1 pb-2 dv-content">
+                        <input type="hidden" name="Id" value="@Model.DocumentRequest.Id" id="hdn-document-request-id" data-required="true" />
+                        <input type="hidden" value="@Model.DocumentRequest.Name" id="hdn-document-request-name" />
+                        <input type="hidden" value="@Model.DocumentRequest.Content" id="hdn-document-content" />
+                        <input type="hidden" value="@Model.DocumentRequest.UniqueFileName" id="fld-upload-file-content-name" />
+                        @if (Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.Draft || Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.DraftRevision || Model.DocumentRequest.Tag == Domain.Models.DocumentRequestState.DraftObsoletion) {
+                            if (Model.TextEditor == "Default") {
+                                <textarea type="text" class="form-control fld-editor" name="Content" rows="7">@Model.DocumentRequest.Content</textarea>
+                            }
+                            if (Model.TextEditor == "None") {
+                                <div>
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td><strong>Uploaded File</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                @if (Model.DocumentRequest.UniqueFileName != null) {
+                                                    <div><a target="_blank" href="/content/files/@Model.DocumentRequest.UniqueFileName">@Model.DocumentRequest.OriginalFileName</a></div>
+                                                    <input type="hidden" id="fld-upload-file-content-name" name="UniqueFileName" value="@Model.DocumentRequest.UniqueFileName" />
+                                                    <input type="hidden" id="fld-upload-file-content-original-file-name" name="OrginalFileName" value="@Model.DocumentRequest.OriginalFileName" />
+                                                } else {
+                                                    <div><em>No file uploaded.</em></div>
+                                                    <input type="hidden" id="fld-upload-file-content-name" name="UniqueFileName" value="@Model.DocumentRequest.UniqueFileName" />
+                                                    <input type="hidden" id="fld-upload-file-content-original-file-name" name="OrginalFileName" value="@Model.DocumentRequest.OriginalFileName" />
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><button id="btn-upload-content" class="btn btn-sm btn-outline-primary ml-1"><i class="fas fa-cloud-upload-alt"></i> Upload</button></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            }
+                        } else {
+                            if (Model.TextEditor != "None") {
+                                <div style="height: 550px;" id="dv-pdf-viewer"></div>
+                                <div style="height: 450px; width:100%; overflow-y: scroll;" class="d-none" id="dv-content-highlighter">@Html.Raw(Model.DocumentRequest.Content)</div>
+                            } else {
+                                <div>
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td><strong>Uploaded File</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                @if (Model.DocumentRequest.UniqueFileName != null) {
+                                                    <div><a target="_blank" href="/content/files/@Model.DocumentRequest.UniqueFileName">@Model.DocumentRequest.OriginalFileName</a></div>
+                                                    <input type="hidden" id="fld-uploaded-file-content-name" name="UniqueFileName" value="@Model.DocumentRequest.UniqueFileName" />
+                                                    <input type="hidden" id="fld-uploaded-file-content-original-file-name" name="OrginalFileName" value="@Model.DocumentRequest.OriginalFileName" />
+                                                } else {
+                                                    <div><em>No file uploaded.</em></div>
+                                                }
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            }
+
+                        }
+                    </div>
+                    <div class="col-4 pl-1">
+                        <table class="table table-bordered">
+                            <tr>
+                                <td><strong>Reviewers - @Model.DocumentRequest.ReviewerSetName</strong></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @if (Model.DocumentRequestApprovals.Count > 0) {
+                                        <table class="table borderless">
+                                            @foreach (var a in Model.DocumentRequestApprovals.Where(a => a.ApprovingAuthorityId == Model.DocumentRequest.ReviewerSetId).OrderBy(a => a.EmployeePosition).ToList()) {
+
+                                                <tr style="border-bottom: solid 1px #ecebeb">
+                                                    <td>
+                                                        @a.EmployeeName<br />
+                                                        <small>@a.EmployeePosition</small>
+                                                    </td>
+                                                    <td class="text-center align-middle">
+                                                        <span class="dv-status-display-@a.Tag">@a.Tag</span><br />
+                                                        @if (a.UpdatedAt.HasValue) {
+                                                            <small>@a.UpdatedAt.Value.ToString()</small>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    } else {
+                                        <table class="table borderless">
+                                            @foreach (var a in Model.Reviewers.OrderBy(a => a.EmployeePosition).ToList()) {
+                                                <tr style="border-bottom: solid 1px #ecebeb">
+                                                    <td>
+                                                        @a.EmployeeName<br />
+                                                        <small>@a.EmployeePosition</small>
+                                                    </td>
+                                                    <td class="text-center align-middle">
+                                                        <span class="dv-status-display-Initiated">Initiated</span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-4 pl-2">
+                        <table class="table table-bordered">
+                            <tr>
+                                <td><strong>Approvers - @Model.DocumentRequest.ApproverSetName</strong></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @if (Model.DocumentRequestApprovals.Count > 0) {
+                                        <table class="table borderless">
+                                            @foreach (var a in Model.DocumentRequestApprovals.Where(a => a.ApprovingAuthorityId == Model.DocumentRequest.ApproverSetId).OrderBy(a => a.EmployeePosition).ToList()) {
+
+                                                <tr style="border-bottom: solid 1px #ecebeb">
+                                                    <td>
+                                                        @a.EmployeeName<br />
+                                                        <small>@a.EmployeePosition</small>
+                                                    </td>
+                                                    <td class="text-center align-middle">
+                                                        <span class="dv-status-display-@a.Tag">@a.Tag</span><br />
+                                                        @if (a.UpdatedAt.HasValue) {
+                                                            <small>@a.UpdatedAt.Value.ToString()</small>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    } else {
+                                        <table class="table borderless">
+                                            @foreach (var a in Model.Approvers.OrderBy(a => a.EmployeePosition).ToList()) {
+                                                <tr style="border-bottom: solid 1px #ecebeb">
+                                                    <td>
+                                                        @a.EmployeeName<br />
+                                                        <small>@a.EmployeePosition</small>
+                                                    </td>
+                                                    <td class="text-center align-middle">
+                                                        <span class="dv-status-display-Initiated">Initiated</span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-4 pl-2">
+                        <table class="table table-bordered">
+                            <tr>
+                                <td><strong>Publisher - @Model.DocumentRequest.PublisherSetName</strong></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @if (Model.DocumentRequestApprovals.Count > 0) {
+                                        <table class="table borderless">
+                                            @foreach (var a in Model.DocumentRequestApprovals.Where(a => a.ApprovingAuthorityId == Model.DocumentRequest.PublisherSetId).OrderBy(a => a.EmployeePosition).ToList()) {
+
+                                                <tr style="border-bottom: solid 1px #ecebeb">
+                                                    <td>
+                                                        @a.EmployeeName<br />
+                                                        <small>@a.EmployeePosition</small>
+                                                    </td>
+                                                    <td class="text-center align-middle">
+                                                        <span class="dv-status-display-@a.Tag">@a.Tag</span><br />
+                                                        @if (a.UpdatedAt.HasValue) {
+                                                            <small>@a.UpdatedAt.Value.ToString()</small>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    } else {
+                                        <table class="table borderless">
+                                            @foreach (var a in Model.Publishers.OrderBy(a => a.EmployeePosition).ToList()) {
+                                                <tr style="border-bottom: solid 1px #ecebeb">
+                                                    <td>
+                                                        @a.EmployeeName<br />
+                                                        <small>@a.EmployeePosition</small>
+                                                    </td>
+                                                    <td class="text-center align-middle">
+                                                        <span class="dv-status-display-Initiated">Initiated</span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-file-upload" tabindex="-1" role="dialog" aria-labelledby="mdl-file-upload" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">File Uploader</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-action">
+                <progress id="file-uploadfile-progress" style="display:none;" max="100" value="0"></progress>
+                <form id="frm-fle-uploader">
+                    <div class="dv-uploader input-group ">
+                        <div class="custom-file">
+                            <input type="file" name="file" class="custom-file-input f12" id="file-file-upload">
+                            <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                        </div>
+                    </div>
+                </form>
+                <div class="dv-viewer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-file-upload-external" tabindex="-1" role="dialog" aria-labelledby="mdl-file-upload-external" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">File Uploader</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-action">
+                <progress id="file-uploadfile-progress-external" style="display:none;" max="100" value="0"></progress>
+                <form id="frm-fle-uploader-external">
+                    <div class="dv-uploader input-group ">
+                        <div class="custom-file">
+                            <input type="file" name="file" class="custom-file-input f12" id="file-file-upload-external">
+                            <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                        </div>
+                    </div>
+                </form>
+                <div class="dv-viewer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-file-attachment" tabindex="-1" role="dialog" aria-labelledby="mdl-file-attachment" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">File Uploader</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-action">
+                <progress id="file-attachment-progress" style="display:none;" max="100" value="0"></progress>
+                <form id="frm-attachment-file-uploader">
+                    <div class="dv-uploader input-group ">
+                        <div class="custom-file">
+                            <input type="file" name="file" class="custom-file-input f12" id="fle-attachment-file-upload">
+                            <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                        </div>
+                    </div>
+                </form>
+                <div class="dv-viewer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-upload-file-content" tabindex="-1" role="dialog" aria-labelledby="mdl-upload-file-content" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">File Uploader</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-action">
+                <progress id="upload-file-content-progress" style="display:none;" max="100" value="0"></progress>
+                <form id="frm-upload-file-content-uploader">
+                    <div class="dv-uploader input-group ">
+                        <div class="custom-file">
+                            <input type="file" name="file" class="custom-file-input f12" id="upload-file-content-upload">
+                            <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                        </div>
+                    </div>
+                </form>
+                <div class="dv-viewer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-document-comment" tabindex="-1" role="dialog" aria-labelledby="mdl-document-comment" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Instruction</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-action">
+                <p class="p-message f12"></p>
+                <button class="btn-sm btn btn-info btn-command" data-command="Rephase">Rephrase</button>
+                <button class="btn-sm btn btn-info btn-command" data-command="Replace">Replace</button>
+                <button class="btn-sm btn btn-info btn-command" data-command="Remove">Remove</button>
+                <button class="btn-sm btn btn-info btn-command" data-command="Reformat">Reformat</button>
+                <button class="btn-sm btn btn-info btn-command" data-command="Simplify">Simplify</button><br />
+                <textarea id="fld-instructions" class="mt-4 form-control" cols="7" rows="5"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-document-comment-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-document-comment-save" class="btn btn-danger">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="annotate_settings" class="ui form raised segments" style="display: none">
+    <!--Notes-->
+    <div class="required field p-around_small">
+        <label>Type some notes</label>
+        <textarea rows="5" onchange="App.handlers.captureNotes( this )"></textarea>
+    </div>
+    <!--Tags-->
+    <div class="p-around_small m-bottom_medium">
+        <div class="ui dropdown labeled icon fluid button">
+            <i class="tag icon"></i>
+            <span class="text">Select a Tag</span>
+            <div class="menu">
+                <div class="ui icon search input">
+                    <i class="search icon"></i>
+                    <input type="text" placeholder="Search tags...">
+                </div>
+                <div class="divider"></div>
+                <div class="header">
+                    <i class="tags icon"></i>
+                    Tag Label
+                </div>
+                <div class="scrolling menu">
+                    <div name="Requirement" class="item">
+                        <div class="ui orange empty circular label"></div>
+                        Requirement
+                    </div>
+                    <div name="Backlog" class="item">
+                        <div class="ui teal empty circular label"></div>
+                        Backlog
+                    </div>
+                    <div name="Internal" class="item">
+                        <div class="ui blue empty circular label"></div>
+                        Internal
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Action Buttons-->
+    <div class="field p-around_small m-bottom_medium">
+        <button class="ui right floated olive button" onclick="App.handlers.saveAnnotation();">Save</button>
+        <button class="ui left floated button" onclick="App.handlers.cancelAnnotation();">Cancel</button>
+    </div>
+    <!--Placeholder-->
+    <div class="field p-around_small m-bottom_medium">
+    </div>
+    <!--Arrow-->
+    <div id="arrow" data-popper-arrow></div>
+</div>
+

@@ -1,0 +1,621 @@
+﻿
+@{
+    ViewBag.Title = "Reports";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+
+
+@section Scripts{
+    <script src="~/Content/js/information-management/reports/index.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@model Web.Areas.InformationManagement.Data.InformationManagementViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+<nav>
+    <div class="nav nav-tabs f12" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active show" id="nav-drcn-report-tab" data-toggle="tab" data-hash="#nav-drcn-report" href="#nav-drcn-report" role="tab" aria-controls="nav-drcn-report" aria-selected="true">DRCN Report</a>
+        <a class="nav-item nav-link" id="nav-masterlist-of-documents-tab" data-toggle="tab" data-hash="#nav-masterlist-of-documents" href="#nav-masterlist-of-documents" role="tab" aria-controls="nav-masterlist-of-documents" aria-selected="false">Masterlist of Documents</a>
+        <a class="nav-item nav-link" id="nav-registration-for-external-document-tab" data-toggle="tab" data-hash="#nav-registration-for-external-document" href="#nav-registration-for-external-document" role="tab" aria-controls="nav-registration-for-external-document" aria-selected="false">Registration for External Documents</a>
+        <a class="nav-item nav-link" id="nav-list-of-departmental-records-tab" data-toggle="tab" data-hash="#nav-list-of-departmental-records" href="#nav-list-of-departmental-records" role="tab" aria-controls="nav-list-of-departmental-records" aria-selected="false">List of Departmental Records</a>
+        @*<a class="nav-item nav-link" id="nav-records-for-transfer-and-disposal-form-tab" data-toggle="tab" data-hash="#nav-records-for-transfer-and-disposal-form" href="#nav-records-for-transfer-and-disposal-form" role="tab" aria-controls="nav-records-for-transfer-and-disposal-form" aria-selected="false">Records for Transfer and Disposal Form</a>*@
+    </div>
+</nav>
+
+<div class="tab-content" id="nav-tabContent">
+
+    <div class="tab-pane fade in show active" id="nav-drcn-report" role="tabpanel" aria-labelledby="nav-drcn-report-tab">
+        <div class="row no-gutters f12">
+            <div class="col-12 pt-2">
+                <div class="card shadow mb-2">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered f12" id="tbl-drcn-report" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th>Control Number</th>
+                                        <th>Title</th>
+                                        <th>Classification</th>
+                                        <th>Originator</th>
+                                        <th>Created</th>
+                                        <th>Status</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        string[] status = { "Draft", "For Approval", "-", "Published", "Cascaded", "Obsolete", "For Revision", "Submitted", "Revised", "For Obsoletion", "Obsolete" };
+                                        var ctr = 0;
+                                        foreach (var a in Model.DocumentRequests) {
+                                            if (a.Tag == Domain.Models.DocumentRequestState.Publish || a.Tag == Domain.Models.DocumentRequestState.Revised) {
+                                                ctr++;
+                                                <tr>
+                                                    <td class="text-center w-5">@ctr</td>
+                                                    <td>@a.DCRN</td>
+                                                    <td>
+                                                        <strong>@a.Name</strong> <br />
+                                                        <small class="font-italic">@a.DocumentNumber</small>
+                                                    </td>
+                                                    <td>
+                                                        <strong>@a.DocumentCategoryName</strong> <br/> 
+                                                        @a.AccessLevelName
+                                                    </td>
+                                                    <td>@a.EmployeeName</td>
+                                                    <td class="w-25">
+                                                        @if (a.CreatedAt != null) {
+                                                            <table class="table table-borderless table-td-spacing" cellspacing="0">
+                                                                <tr>
+                                                                    <td>Year:</td>
+                                                                    <td>@a.CreatedAt.ToLongDateString()</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Issued:</td>
+                                                                    <td>@a.CreatedAt.ToLongDateString()</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Approved:</td>
+                                                                    <td>@a.UpdatedAt.Value.ToLongDateString()</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Published:</td>
+                                                                    <td>@a.UpdatedAt.Value.ToLongDateString()</td>
+                                                                </tr>
+                                                            </table>
+                                                        }
+                                                    </td>
+                                                    <td>@status[Convert.ToInt32(a.Tag)]</td>
+                                                    <td>No data.</td>
+                                                </tr>
+                                            }
+
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="nav-masterlist-of-documents" role="tabpanel" aria-labelledby="nav-masterlist-of-documents-tab">
+        <div class="row no-gutters f12">
+            <div class="col-12 pt-2">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <div class="row">
+                            <div class="col-6 text-left">
+                                <button id="btn-internal" class="btn btn-primary btn-view-masterlist-documents" data-table="tbl-internal">Internal Documents</button>
+                                <button id="btn-external" class="btn btn-outline-primary btn-view-masterlist-documents" data-table="tbl-external">External Documents</button>
+                                <button id="btn-obsolete" class="btn btn-outline-primary btn-view-masterlist-documents" data-table="tbl-obsolete">Obsolete Documents</button>
+                            </div>
+                            <div class="col-6 text-right">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive tbl" id="tbl-internal">
+                            <small>
+                                <table class="table table-bordered f12 tbl-masterlist-of-documents" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">#</th>
+                                            <th>Title</th>
+                                            <th>Date Published</th>
+                                            <th>Revision No.</th>
+                                            <th>Originator</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            var ctrInternal = 0;
+                                            foreach (var a in Model.DocumentRequests) {
+                                                if (a.Tag == Domain.Models.DocumentRequestState.Publish || a.Tag == Domain.Models.DocumentRequestState.Revised) {
+                                                    ctrInternal++;
+                                                    <tr>
+                                                        <td class="text-center w-5">@ctrInternal</td>
+                                                        <td>@a.Name</td>
+                                                        <td>@a.UpdatedAt.Value.ToLongDateString()</td>
+                                                        <td>@a.RevisionNo</td>
+                                                        <td>@a.EmployeeName</td>
+                                                        <td>No data.</td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </small>
+                        </div>
+                        <div class="table-responsive tbl d-none" id="tbl-external">
+                            <small>
+                                <table class="table table-bordered f12 tbl-masterlist-of-documents" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">#</th>
+                                            <th>Title</th>
+                                            <th>Date Received</th>
+                                            <th>Received By</th>
+                                            <th>Received From</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            var ctrExternal = 0;
+                                            foreach (var a in Model.ExternalDocuments) {
+                                                ctrExternal++;
+                                                <tr>
+                                                    <td class="text-center w-5">@ctrExternal</td>
+                                                    <td>@a.Title</td>
+                                                    <td>@a.Date.ToLongDateString()</td>
+                                                    <td>@a.ReceivedBy</td>
+                                                    <td>@a.From</td>
+                                                    <td>@a.Remarks</td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </small>
+                        </div>
+                        <div class="table-responsive tbl d-none" id="tbl-obsolete">
+                            <small>
+                                <table class="table table-bordered f12 tbl-masterlist-of-documents" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">#</th>
+                                            <th>Title</th>
+                                            <th>Date Published</th>
+                                            <th>Revision No.</th>
+                                            <th>Originator</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            var ctrObsolete = 0;
+                                            foreach (var a in Model.DocumentRequests) {
+                                                if (a.Tag == Domain.Models.DocumentRequestState.Obsolete) {
+                                                    ctrObsolete++;
+                                                    <tr>
+                                                        <td class="text-center w-5">@ctrObsolete</td>
+                                                        <td>@a.Name</td>
+                                                        <td>@a.UpdatedAt.Value.ToLongDateString()</td>
+                                                        <td>No data.</td>
+                                                        <td>@a.EmployeeName</td>
+                                                        <td>No data.</td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="nav-registration-for-external-document" role="tabpanel" aria-labelledby="nav-registration-for-external-document-tab">
+        <div class="row no-gutters f12">
+            <div class="col-12 pt-2">
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-6">
+                            </div>
+                            <div class="col-6">
+                                <button id="btn-add-external-document" class="btn btn-sm btn-primary fa-pull-right"><i class="fa fa-plus"></i> Add External Document</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <small>
+                                <table class="table table-bordered f12" id="tbl-registration-for-external-document" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">#</th>
+                                            <th>Title</th>
+                                            <th>Revision No.</th>
+                                            <th>Published Date</th>
+                                            <th>Originator</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            var ctrRegExternal = 0;
+                                            foreach (var a in Model.ExternalDocuments) {
+                                                ctrRegExternal++;
+                                                <tr>
+                                                    <td class="text-center w-5">@ctrRegExternal</td>
+                                                    <td>@a.Title</td>
+                                                    <td>No data.</td>
+                                                    <td>@a.Date.ToLongDateString()</td>
+                                                    <td>@a.ReceivedBy</td>
+                                                    <td>@a.Remarks</td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="nav-list-of-departmental-records" role="tabpanel" aria-labelledby="nav-list-of-departmental-records-tab">
+        <div class="row no-gutters f12">
+            <div class="col-12 pt-2">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <small>
+                                <table class="table table-bordered f12" id="tbl-list-of-departmental-records" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">#</th>
+                                            <th>Title</th>
+                                            <th>Storage & Location</th>
+                                            <th>Retention Period</th>
+                                            <th>Disposal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            var drc = 0;
+                                            foreach (var a in Model.DocumentRequests) {
+                                                if (a.Tag == Domain.Models.DocumentRequestState.Publish || a.Tag == Domain.Models.DocumentRequestState.Revised) {
+                                                    drc++;
+                                                    <tr>
+                                                        <td class="text-center w-5">@drc</td>
+                                                        <td>
+                                                            @a.Name <br />
+                                                            <small class="font-italic">@a.DocumentNumber</small>
+                                                        </td>
+                                                        <td>
+                                                            @a.DepartmentName
+                                                        </td>
+                                                        <td>@a.CreatedAt.ToShortDateString() - @a.UpdatedAt.Value.ToShortDateString()</td>
+                                                        <td>No data.</td>
+                                                    </tr>
+                                                }
+
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="nav-records-for-transfer-and-disposal-form" role="tabpanel" aria-labelledby="nav-records-for-transfer-and-disposal-form-tab">
+        <div class="row no-gutters f12">
+            <div class="col-12 pt-2">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <div class="row">
+                            <div class="col-6 text-left">
+                                <button id="btn-transfer" class="btn btn-primary btn-view-record" data-table="tbl-transfer">Transfer</button>
+                                <button id="btn-disposal" class="btn btn-outline-primary btn-view-record" data-table="tbl-disposal">Disposal</button>
+                            </div>
+                            <div class="col-6 text-right">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive tbl-form" id="tbl-transfer">
+                            <small>
+                                <table class="table table-bordered f12" id="tbl-list-of-departmental-records" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">#</th>
+                                            <th>Title</th>
+                                            <th>Retention Period</th>
+                                            <th>Transfer By</th>
+                                            <th>Approved By</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-center w-5">1</td>
+                                            <td>
+                                                Transfer    <br />
+                                                <small>405-890-686-704</small>
+                                            </td>
+                                            <td>05-30-2020 to 07-20-2021</td>
+                                            <td>Emerson Ruiz Cristobal</td>
+                                            <td>Emerson Ruiz Cristobal</td>
+                                            <td>Good</td>
+                                        </tr>
+
+
+                                    </tbody>
+                                </table>
+                            </small>
+                        </div>
+                        <div class="table-responsive tbl-form d-none" id="tbl-disposal">
+                            <small>
+                                <table class="table table-bordered f12" id="tbl-list-of-departmental-records" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">#</th>
+                                            <th>Title</th>
+                                            <th>Disposal Date</th>
+                                            <th>Approved By</th>
+                                            <th>Remarks</th>
+                                            <th>Actual Disposal Date</th>
+                                            <th>Facilitated By</th>
+                                            <th>Method</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-center w-5">1</td>
+                                            <td>
+                                                Disposal<br />
+                                                <small>405-890-686-704</small>
+                                            </td>
+                                            <td>05-30-2020</td>
+                                            <td>Emerson Ruiz Cristobal</td>
+                                            <td>Good</td>
+                                            <td>07-25-2021</td>
+                                            <td>Emerson Ruiz Cristobal</td>
+                                            <td>Burning</td>
+                                        </tr>
+
+
+                                    </tbody>
+                                </table>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="mdl-new" tabindex="-1" role="dialog" aria-labelledby="mdl-new" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Document</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new">
+                div
+                <label>Name</label>
+                <input type="text" class="form-control mb-2" id="fld-new-name" name="Name" data-required="true" placeholder="Name" />
+
+                <label>Type</label>
+                <select class="fld-document-type form-control mb-2" name="DocumentType">
+                    <option value="">Sample 1</option>
+                    <option value="">Sample 2</option>
+                </select>
+
+                <label>Category</label>
+                <select class="fld-document-categories form-control mb-2" name="Gender">
+                    <option value="">Sample 1</option>
+                    <option value="">Sample 2</option>
+                </select>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit" tabindex="-1" role="dialog" aria-labelledby="mdl-edit" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Document</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit">
+                <input type="hidden" id="fld-edit-id" name="Id" data-required="true" />
+                <input type="text" class="form-control mb-2" id="fld-edit-name" name="Name" data-required="true" placeholder="Name" />
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="mdl-new-external-document" tabindex="-1" role="dialog" aria-labelledby="mdl-new-external-document" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">New External Document</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new-external-document">
+                <div class="row no-gutters">
+                    <div class="col-8">
+                        <label>Title</label>
+                        <input class="form-control mb-2" id="fld-new-title" type="text" name="Title" placeholder="Title" data-required="true" />
+                    </div>
+                    <div class="col-4 pl-2">
+                        <label>Date</label>
+                        <input class="form-control mb-2 fld-date" id="fld-new-date" type="text" name="Date" placeholder="Date" data-required="true" />
+                    </div>
+                    <div class="col-12">
+                        <label>Received By</label>
+                        <select class="fld-employees">
+                            <option value="">-</option>
+                        </select>
+                        <input id="fld-new-employee-id" type="hidden" name="EmployeeId" />
+                        <input id="fld-new-received-by" type="hidden" name="ReceivedBy" placeholder="Received By" data-required="true" />
+                    </div>
+                    <div class="col-12">
+                        <label>Received From</label>
+                        <input class="form-control mb-2" id="fld-new-from" type="text" name="From" placeholder="From" data-required="true" />
+                    </div>
+                    <div class="col-12">
+                        <label>Remarks</label>
+                        <textarea type="text" class="form-control mb-2" name="Remarks" data-required="true" id="fld-new-remarks"></textarea>
+                    </div>
+                    <div class="col-12">
+                        <hr class="hr-style-1" />
+                    </div>
+                    <div class="col-6">
+                        <strong>Uploaded file:</strong>
+                        <label class="lbl-file-uploaded" style="margin-bottom:0px !important;"></label><br />
+                        <strong>File name:</strong>
+                        <label class="lbl-file" style="margin-bottom:0px !important;"></label>
+                        <input type="hidden" id="fld-new-unique-file-name" name="UniqueFileName" data-required="true" />
+                        <input type="hidden" id="fld-new-original-file-name" name="OriginalFileName" data-required="true" placeholder="File" />
+                    </div>
+                    <div class="col-6 pl-1">
+                        <progress id="file-uploadphoto-progress" style="display:none;" max="100" value="0"></progress>
+                        <form id="frm-photo-uploader">
+                            <div class="dv-uploader input-group ">
+                                <div class="custom-file">
+                                    <input type="file" name="file" class="custom-file-input f12" id="fle-upload">
+                                    <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="dv-viewer">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-external-document-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-external-document-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-external-document" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-external-document" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Update External Document</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit-external-document">
+                <div class="row no-gutters">
+                    <div class="col-8">
+                        <label>Title</label>
+                        <input class="form-control mb-2" id="fld-edit-title" type="text" name="Title" placeholder="Title" data-required="true" />
+                        <input type="hidden" id="fld-edit-id" name="Id" data-required="true" />
+                    </div>
+                    <div class="col-4 pl-2">
+                        <label>Date</label>
+                        <input class="form-control mb-2 fld-date" id="fld-edit-date" type="text" name="Date" placeholder="Date" data-required="true" />
+                    </div>
+                    <div class="col-12">
+                        <label>Received By:</label>
+                        <select class="fld-edit-employees">
+                            <option value="">-</option>
+                        </select>
+                        <input id="fld-edit-employee-id" type="hidden" name="EmployeeId" />
+                        <input id="fld-edit-received-by" type="hidden" name="ReceivedBy" placeholder="Received By" data-required="true" />
+                    </div>
+                    <div class="col-12">
+                        <label>Received From</label>
+                        <input class="form-control mb-2" id="fld-edit-from" type="text" name="From" placeholder="From" data-required="true" />
+                    </div>
+                    <div class="col-12">
+                        <label>Remarks</label>
+                        <textarea type="text" class="form-control mb-2" name="Remarks" data-required="true" id="fld-edit-remarks"></textarea>
+                    </div>
+                    <div class="col-12">
+                        <hr class="hr-style-1" />
+                    </div>
+                    <div class="col-6">
+                        <strong>Uploaded file:</strong>
+                        <label class="lbl-file-uploaded" style="margin-bottom:0px !important;"></label><br />
+                        <strong>File name:</strong>
+                        <label class="lbl-file" style="margin-bottom:0px !important;"></label>
+                        <input type="hidden" id="fld-edit-unique-file-name" name="UniqueFileName" data-required="true" />
+                        <input type="hidden" id="fld-edit-original-file-name" name="OriginalFileName" data-required="true" placeholder="File" />
+                    </div>
+                    <div class="col-6 pl-1">
+                        <progress id="file-edit-uploadphoto-progress" style="display:none;" max="100" value="0"></progress>
+                        <form id="frm-edit-photo-uploader">
+                            <div class="dv-uploader input-group ">
+                                <div class="custom-file">
+                                    <input type="file" name="file" class="custom-file-input f12" id="fle-edit-upload">
+                                    <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="dv-viewer">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-external-document-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-external-document-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

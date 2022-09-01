@@ -1,0 +1,21 @@
+﻿using Domain.Enums;
+using Service.Attributes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Web.Areas.Shared.Controllers;
+
+namespace Web.Areas.Forms.Controllers
+{
+    public class MainController : BaseController
+    {
+
+        [AuthorizeRoleBase(ApplicationElement = ApplicationElement.SaleDelete)]
+        public ActionResult Index()
+        {
+            return View();
+        }
+    }
+}

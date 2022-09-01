@@ -1,0 +1,474 @@
+﻿
+@{
+    ViewBag.Title = "Profile";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.CurrentEmployee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/js/account/profile/index.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@model Web.Areas.Account.Models.AccountViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="row no-gutters">
+            <div class="col-5 pt-4">
+                <div class="card shadow mb-2">
+                    <div class="card-body">
+                        <div class="row no-gutters bdy-profile f12">
+                            <div class="col-12">
+                                <div class="container">
+                                    @{ if (Model.Employee.Photo != null) {
+                                            <img class="img-circle rounded-circle card-img-top-profile" src="~/Content/files/@Model.Employee.Photo" />
+                                        } else {
+                                            <img class="img-circle rounded-circle card-img-top-profile" src="~/Content/img/default-avatar.png" />
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            @{ if (Model.CheckId != "null") {
+                                    <div class="col-12 text-left mb-3">
+                                        <button id="btn-back" class="btn btn-light btn-sm"><i class="fa fa-arrow-left"></i></button>
+                                    </div>
+                                } else { 
+                                    <div class="col-12 mb-5"></div>
+                                }
+
+                            }
+                            <div class="col-4">
+                                <label>First name</label>
+                                <input class="form-control" id="fld-edit-id" type="hidden" name="Id" value="@Model.Employee.Id" />
+                                <input class="form-control" id="fld-edit-id" type="hidden" name="UserId" value="@Model.User.Id" />
+                                <input class="form-control" id="fld-edit-first-name" type="text" name="FirstName" value="@Model.Employee.Firstname" disabled />
+                            </div>
+                            <div class="col-4 pl-2">
+                                <label>Middle name</label>
+                                <input class="form-control" id="fld-edit-middle-name" type="text" name="MiddleName" value="@Model.Employee.Middlename" disabled />
+                            </div>
+                            <div class="col-4 pl-2 mb-2">
+                                <label>Last name</label>
+                                <input class="form-control" id="fld-edit-last-name" type="text" name="LastName" value="@Model.Employee.Lastname" disabled />
+                            </div>
+                            <div class="col-12 mb-2">
+                                <label>Address</label>
+                                <input class="form-control" id="fld-edit-address" type="text" name="Address" value="@Model.Employee.Address" disabled />
+                            </div>
+                            <div class="col-4">
+                                <label>Date of birth</label>
+                                <input class="form-control fld-date" id="fld-edit-date-of-birth" type="text" name="DateOfBirth" value="@Model.Employee.DateOfBirth" disabled />
+                            </div>
+                            <div class="col-4 pl-2">
+                                <label>Gender</label>
+                                <input class="form-control" id="fld-edit-gender" type="text" name="Gender" value="@Model.Employee.Gender" disabled />
+                            </div>
+                            <div class="col-4 pl-2 mb-2">
+                                <label>Nationality</label>
+                                <input class="form-control" id="fld-edit-nationality" type="text" name="Nationality" value="@Model.Employee.Nationality" disabled />
+                            </div>
+
+                            <div class="col-12">
+                                <hr class="hr-style-1" />
+                            </div>
+
+                            <div class="col-12 mb-2">
+                                <label>Contacts</label>
+                                @{ if (Model.Employee.ContactDetails.Count != 0) {
+                                        <ul class="list-group">
+                                            @foreach (var a in Model.Employee.ContactDetails) {
+
+                                                <li class="list-group-item">
+                                                    <strong>@a.Contact</strong>
+                                                    <br /><small>@a.Label</small>
+                                                </li>
+
+                                            }
+                                        </ul>
+                                    } else {
+                                        <ul class="list-group">
+                                            <li class="list-group-item">No information.</li>
+                                        </ul>
+                                    }
+
+                                }
+                            </div>
+
+                            <div class="col-12">
+                                <hr class="hr-style-1" />
+                            </div>
+
+                            <div class="col-12 mb-2">
+                                <label>Job Description</label>
+                                <ul class="list-group">
+                                    @{ if (Model.Employee.JobDescriptions.Count != 0) {
+                                            foreach (var a in Model.Employee.JobDescriptions) {
+                                                <li class="list-group-item">
+                                                    <strong>@a.Title</strong> <br />
+                                                    Supervisor - @a.SupervisorName
+                                                    <br /><small>@a.Description</small>
+                                                </li>
+                                            }
+                                        } else {
+                                            <li class="list-group-item">No information.</li>
+                                        }
+
+                                    }
+                                </ul>
+                            </div>
+
+                            <div class="col-12">
+                                <hr class="hr-style-1" />
+                            </div>
+
+                            <div class="col-12 mb-2">
+                                <label>Experiences</label>
+                                <ul class="list-group">
+                                    @{ if (Model.Employee.Experiences.Count != 0) {
+                                            foreach (var a in Model.Employee.Experiences) {
+                                                <li class="list-group-item">
+                                                    <strong>@a.PositionName</strong>
+                                                    <br /><em>@a.CompanyName - @a.CompanyLocation </em>
+                                                    <br /><small><em>@string.Format("{0}-{1}", a.StartYear, a.EndYear)</em></small>
+                                                </li>
+                                            }
+                                        } else {
+                                            <li class="list-group-item">No information.</li>
+                                        }
+
+                                    }
+                                </ul>
+                            </div>
+
+                            <div class="col-12">
+                                <hr class="hr-style-1" />
+                            </div>
+
+                            <div class="col-12 mb-2">
+                                <label>Qualifications</label>
+                                <ul class="list-group">
+                                    @{ if (Model.Employee.EmployeeQualifications.Count != 0) {
+                                            foreach (var a in Model.Employee.EmployeeQualifications) {
+                                                <li class="list-group-item">
+                                                    <strong>@a.Label</strong><br />
+                                                    <em><small>@a.Description</small></em>
+                                                </li>
+                                            }
+                                        } else {
+                                            <li class="list-group-item">No information.</li>
+                                        }
+
+                                    }
+                                </ul>
+                            </div>
+
+                            <div class="col-12">
+                                <hr class="hr-style-1" />
+                            </div>
+
+                            <div class="col-12 mb-2">
+                                <label>Roles and Responsibilities</label>
+                                <ul class="list-group">
+                                    @{ if (Model.Employee.EmployeeRoleAndResponsibilities.Count != 0) {
+                                            foreach (var a in Model.Employee.EmployeeRoleAndResponsibilities) {
+                                                <li class="list-group-item">
+                                                    @a.Name<br />
+                                                    <small>@a.Description</small>
+                                                    <br /><small>File: <a href="~/Content/files/@a.UniqueFileName" target="_blank">@a.OriginalFileName</a></small>
+                                                </li>
+                                            }
+                                        } else {
+                                            <li class="list-group-item">No information.</li>
+                                        }
+
+                                    }
+                                </ul>
+                            </div>
+
+                            <div class="col-12">
+                                <hr class="hr-style-1" />
+                            </div>
+
+                            <div class="col-12 mb-2">
+                                <label>Documents</label>
+                                <ul class="list-group">
+                                    @{ if (Model.Employee.Documents.Count != 0) {
+                                            foreach (var a in Model.Employee.Documents) {
+
+                                                var completePath = string.Format("{0}{1}", a.Path, a.FileName);
+                                                <li class="list-group-item">
+                                                    @a.Label
+                                                    <br /><strong><small>@a.DocumentGroupName</small></strong>
+                                                    <br /><small>File: <a href="~/@completePath" target="_blank">@a.OriginalFileName</a></small>
+                                                </li>
+
+                                            }
+                                        } else {
+                                            <li class="list-group-item">No information.</li>
+                                        }
+
+                                    }
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-7 mb-4 pt-4 f12">
+                <div class="row no-gutters">
+
+                    <div class="col-12 pl-3">
+                        <div class="card shadow mb-3">
+                            <div class="card-body">
+
+                                <div class="row no-gutters">
+                                    <div class="col-12">
+                                        <div class="row no-gutters">
+                                            <div class="col-6">
+                                                <label><strong>Designations</strong></label>
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered" id="tbl-designations" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center w-5">#</th>
+                                                                <th>Department</th>
+                                                                <th>Date</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @{
+                                                                var countDesignations = 0;
+                                                                foreach (var a in Model.Employee.EmployeePositions) {
+                                                                    countDesignations++;
+                                                                    <tr>
+                                                                        <td class="text-center w-5">@countDesignations</td>
+                                                                        <td>
+                                                                            <strong>@a.DepartmentName</strong> <br />
+                                                                            <em>@a.PositionName</em> <br />
+                                                                            <em><small>@a.ReportingToEmployeeFullName</small></em>
+                                                                        </td>
+                                                                        <td>
+                                                                            @{
+                                                                                if (a.StartDate == null) {
+                                                                                    <span>&nbsp;</span>
+                                                                                } else {
+                                                                                    <span>@a.StartDate.ToShortDateString() <br /> @if (a.EndDate != null) { @a.EndDate.Value.ToShortDateString() } </span>
+                                                                                }
+                                                                            }
+                                                                        </td>
+                                                                    </tr>
+
+                                                                }
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6 pl-3">
+                                                <label><strong>Competencies</strong></label>
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered" id="tbl-competencies" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center w-5">#</th>
+                                                                <th>Competency</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @{
+                                                                var countCompetencies = 0;
+                                                                foreach (var a in Model.Employee.EmployeeCompetencies) {
+                                                                    countCompetencies++;
+                                                                    <tr>
+                                                                        <td class="text-center w-5">@countCompetencies</td>
+                                                                        <td>
+                                                                            <strong>@a.Name</strong> <br />
+                                                                            <em>@a.CompetencyTypeName</em>
+                                                                            <br /><small>@a.Description</small>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr class="hr-style-1" />
+                                    </div>
+                                </div>
+
+
+                                <div class="row no-gutters">
+                                    <div class="col-12">
+                                        <div class="row no-gutters">
+                                            <div class="col-6">
+                                                <label><strong>KPIs</strong></label>
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered" id="tbl-kpis" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center w-5">#</th>
+                                                                <th>Name</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @{
+                                                                var countKPI = 0;
+                                                                foreach (var a in Model.Employee.EmployeeKPIs) {
+                                                                    countKPI++;
+                                                                    <tr>
+                                                                        <td class="text-center w-5">@countKPI</td>
+                                                                        <td>
+                                                                            <strong>@a.Name</strong>
+                                                                            <br /><em>@a.Target</em>
+                                                                            <br /><small>@a.Description</small>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6 pl-3">
+                                                <label><strong>Programs</strong></label>
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered" id="tbl-programs" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center w-5">#</th>
+                                                                <th>Name</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @{
+                                                                var countPrograms = 0;
+                                                                foreach (var a in Model.Employee.Programs) {
+                                                                    countPrograms++;
+                                                                    <tr>
+                                                                        <td class="text-center w-5">@countPrograms</td>
+                                                                        <td>
+                                                                            <strong>@a.Name</strong><br />
+                                                                            <small>@a.ExpectedStartDate.ToShortDateString() - @a.ExpectedEndDate.ToShortDateString()</small>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr class="hr-style-1" />
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label><strong>Reports</strong></label>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered" id="tbl-reports" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center w-5">#</th>
+                                                        <th>Name</th>
+                                                        <th>Frequency</th>
+                                                        <th>Submitted To</th>
+                                                        <th>File</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{
+                                                        var countReports = 0;
+                                                        foreach (var a in Model.EmployeeReports) {
+                                                            countReports++;
+                                                            <tr>
+                                                                <td class="text-center w-5">@countReports</td>
+                                                                <td>
+                                                                    @a.Name<br />
+                                                                    <small>@a.Description</small>
+                                                                </td>
+                                                                <td>@a.Frequency</td>
+                                                                <td>
+                                                                    @foreach (var b in a.Recipients) {
+                                                                        <span>@b.SubmittedToFullName</span><br />
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    <a href="~/Content/files/@a.UniqueFileName" target="_blank">@a.OriginalFileName</a>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="mdl-photo" tabindex="-1" role="dialog" aria-labelledby="mdl-photo" aria-hidden="true">
+    <div class="modal-dialog modal modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Photo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-update-photo">
+                <div class="row no-gutters">
+                    <div class="col-6">
+                        <strong>Uploaded file:</strong>
+                        <label class="lbl-file-uploaded" style="margin-bottom:0px !important;"></label><br />
+                        <strong>File name:</strong>
+                        <label class="lbl-file" style="margin-bottom:0px !important;"></label>
+                        <input type="hidden" id="fld-edit-photo-id" name="Id" data-required="true" />
+                        <input type="hidden" id="fld-file-name" name="Photo" data-required="true" />
+                        <input type="hidden" id="fld-original-file-name" name="PhotoOriginalFileName" data-required="true" />
+                    </div>
+                    <div class="col-6 pl-1">
+                        <form id="frm-photo-uploader">
+                            <div class="dv-uploader input-group ">
+                                <div class="custom-file">
+                                    <input type="file" name="file" class="custom-file-input f12" id="fle-photo-upload">
+                                    <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="dv-viewer">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-photo-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

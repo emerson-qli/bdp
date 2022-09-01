@@ -1,0 +1,85 @@
+﻿
+@{
+    ViewBag.Title = "Reports";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/js/audit-management/reports/index.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@model Web.Areas.AuditManagement.Data.AuditManagementViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-6">
+                Reports
+            </div>
+            <div class="col-6">
+                
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <small>
+                <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th class="w-25">Name</th>
+                            <th>Audit Category</th>
+                            <th>Auditors</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var cd = 0;
+                            foreach (var a in Model.AuditPlans) {
+                                cd++;
+                                <tr>
+                                    <td class="text-center w-5">@cd</td>
+                                    <td>
+                                        <strong>@a.Name</strong> <br />
+                                        <small>@a.Description</small>
+                                    </td>
+                                    <td>@a.AuditCategoryName</td>
+                                    <td>
+                                        <ul class="list-group">
+                                            @foreach (var c in a.AuditPlanAuditors) {
+                                                <li class="list-group-item">@c.AuditorName</li>
+                                            }
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul class="list-group">
+                                            @foreach (var b in a.AuditSchedules) {
+                                                <li class="list-group-item">@b.StartDate.ToShortDateString() to @b.EndDate.ToShortDateString()</li>
+                                            }
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        @if (a.Tag == Domain.Models.AuditPlanState.Audited) {<strong class="text-success">@a.Tag</strong>}
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </small>
+        </div>
+    </div>
+</div>
+

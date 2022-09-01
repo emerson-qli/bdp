@@ -1,0 +1,176 @@
+﻿
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/js/system/roles/view.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+}
+
+@model Web.Areas.Shared.ViewModels.SystemRolesViewViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-6">
+                <button id="btn-back" class="btn btn-sm btn-primary" data-tooltip="tooltip" data-placement="top" title="Back"><i class="fa fa-arrow-alt-circle-left"></i> @Model.Role.Name Permission</button>
+            </div>
+            <div class="col-6">
+                <div class="btn-group fa-pull-right">
+                    <button id="btn-grant-permissions" class="btn btn-danger fa-pull-right"><i class="fa fa-flag"></i></button>
+                    <button id="btn-revoke-permissions" class="btn btn-danger fa-pull-right"><i class="fa fa-trash"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <small>
+                <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th>Page</th>
+                            <th>Last Updated</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{var count = 0;}
+                        @foreach (var item in Model.RoleTemplates) {
+                            count++;
+                            if (item.Value != null) {
+                                <tr>
+                                    <td>@count </td>
+                                    <td>@item.Value.ApplicationElement</td>
+                                    <td class="fld-date-format">@item.Value.CreatedAt</td>
+                                    <td class="w-10 text-center">
+                                        <div class="btn-group" role="group">
+                                            <a href="javascript:void(0);" class="btn btn-secondary btn-revoke dv-revoke-role-permission" data-tooltip="tooltip" data-role-id="@Model.Role.Id" data-role-name="@Model.Role.Name" data-role-template-id="@item.Value.Id" data-role-template-name="@item.Key" title="Revoke Permission"><i class="fa fa-lock"></i></a>
+                                            <a href="javascript:void(0);" class="btn btn-info btn-revoke-role-permission dv-flag-role-permission" data-tooltip="tooltip" data-role-id="@Model.Role.Id" data-role-name="@Model.Role.Name" data-role-template-id="@item.Value.Id" data-role-permission-name="@item.Key" data-flagged="false" data-operation="revoke" title="Flag"><i class="fa fa-flag"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            } else {
+                                <tr>
+                                    <td>@count </td>
+                                    <td>@item.Key</td>
+                                    <td></td>
+                                    <td class="w-10 text-center">
+                                        <div class="btn-group" role="group">
+                                            <a href="javascript:void(0);" class="btn btn-secondary btn-grant dv-grant-role-permission" data-tooltip="tooltip" data-application-element="@item.Key" data-role-id="@Model.Role.Id" title="Grant Permission"><i class="fa fa-key"></i></a>
+                                            <a href="javascript:void(0);" class="btn btn-secondary dv-flag-role-permission" id="btn-role-permission" data-tooltip="tooltip" data-role-permission-name="@item.Key" data-role-id="@Model.Role.Id" data-role-name="@Model.Role.Name" data-flagged="false" data-operation="grant" title="Flag"><i class="fa fa-flag"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </small>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new" tabindex="-1" role="dialog" aria-labelledby="mdl-new" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Grant Permission</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new">
+                <div class="row no-gutters">
+                    <p>Are you sure you want to grant this role access to this resource?</p>
+                    <input type="hidden" name="ApplicationElement" id="fld-grant-role-application-element" />
+                    <input type="hidden" name="RoleId" id="fld-grant-role-role-id" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-grant-permissions" tabindex="-1" role="dialog" aria-labelledby="mdl-grant-permissions" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Grant Permission</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new">
+                <div class="row no-gutters">
+                    <p>Are you sure you want to grant this role access to the selected resources?</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-grant-permissions" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-revoke-permissions" tabindex="-1" role="dialog" aria-labelledby="mdl-revoke-permission" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Revoke Permission</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit">
+                <div class="row no-gutters">
+                    <p>Are you sure you want to revoke this role's access to the selected resources ?</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-remove-permissions" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit" tabindex="-1" role="dialog" aria-labelledby="mdl-edit" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Revoke Permission</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit">
+                <div class="row no-gutters">
+                    <p>Are you sure you want to revoke this role's access to this resource ?</p>
+                    <input type="hidden" name="RoleId" id="fld-revoke-role-template-id" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

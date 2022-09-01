@@ -1,0 +1,232 @@
+﻿
+@{
+    ViewBag.Title = "Profile";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/js/organization/profile/view.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@using System.Text.RegularExpressions;
+
+@model Web.Areas.Organization.Data.OrganizationViewModel
+
+@helper StripHTML(string input) {
+    if (!string.IsNullOrEmpty(input)) {
+        input = Regex.Replace(input, "<.*?>", String.Empty);
+        <span>@input</span>
+    }
+}
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="row no-gutters">
+            <div class="col-4 pt-4">
+                <div class="card shadow mb-2">
+                    <div class="card-body">
+                        <div class="row no-gutters bdy-profile f12">
+                            <div class="col-12">
+                                <div class="container">
+                                    @{ if (Model.Organization.LogoUniqueFileName != null) {
+                                            <img class="img-circle rounded-circle card-img-top-company-profile" src="~/content/files/@Model.Organization.LogoUniqueFileName" />
+                                        } else {
+                                            <img class="img-circle rounded-circle card-img-top-company-profile" src="~/content/img/default-avatar.png" />
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-12 text-left mb-3">
+                                <button id="btn-back" class="btn btn-light btn-sm"><i class="fa fa-arrow-left"></i></button>
+                            </div>
+
+                            <div class="col-12 text-center">
+                                <strong>@Model.Organization.Name</strong><br />
+                                <small>@Model.Organization.Code</small>
+                            </div>
+
+                            <div class="col-12">
+                                <hr class="hr-style-1" />
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label>Details</label>
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        @StripHTML(Model.Organization.CompanyDetails)
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label>Establish</label>
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        @Model.Organization.Established.ToShortDateString()
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label>Address</label>
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        @Model.Organization.Address
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-8 mb-4 pt-4 f12">
+                <div class="row no-gutters">
+                    <div class="col-12 pl-3">
+                        <div class="card shadow mb-3">
+                            <div class="card-body">
+                                <div class="row no-gutters">
+
+                                    <div class="col-6 text-center">
+                                        <strong>Vision</strong><br />
+                                        @{ if (Model.OrganizationVision.Vision != null) {
+                                                <em>@StripHTML(Model.OrganizationVision.Vision) </em>
+                                            } else {
+                                                <em>No information</em>
+                                            }
+                                        }
+                                    </div>
+
+                                    <div class="col-6 pl-2 text-center">
+                                        <strong>Mission</strong><br />
+                                        @{ if (Model.OrganizationVision.Mission != null) {
+                                                <em>@StripHTML(Model.OrganizationVision.Mission) </em>
+                                            } else {
+                                                <em>No information</em>
+                                            }
+                                        }
+                                    </div>
+
+                                    <div class="col-12 mt-2">
+                                        <label>Values</label>
+                                        <ul class="list-group">
+                                            @{ if (Model.OrganizationValues.Count != 0) {
+                                                    foreach (var a in Model.OrganizationValues) {
+                                                        <li class="list-group-item">
+                                                            <strong>@a.Name</strong> <br />
+                                                            <small>@a.Description</small>
+                                                        </li>
+                                                    }
+                                                } else {
+                                                    <li class="list-group-item">
+                                                        No information.
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <hr class="hr-style-1" />
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label>Management Systems</label>
+                                        <ul class="list-group">
+                                            @{ if (Model.OrganizationManagementSystems.Count != 0) {
+                                                    foreach (var a in Model.OrganizationManagementSystems) {
+                                                        <li class="list-group-item">
+                                                            <strong>@a.Type</strong> <br />
+                                                            <small>@a.Version</small>
+                                                        </li>
+                                                    }
+                                                } else {
+                                                    <li class="list-group-item">
+                                                        No information.
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+
+                                    <div class="col-6 pl-2">
+                                        <label>Subsidiaries</label>
+                                        <ul class="list-group">
+                                            @{ if (Model.OrganizationSubsidiaries.Count != 0) {
+                                                    foreach (var a in Model.OrganizationSubsidiaries) {
+                                                        <li class="list-group-item">
+                                                            <strong>@a.Name</strong> <br />
+                                                            <small>@a.Description</small>
+                                                        </li>
+                                                    }
+                                                } else {
+                                                    <li class="list-group-item">
+                                                        No information.
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <hr class="hr-style-1" />
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label>Products</label>
+                                        <ul class="list-group">
+                                            @{ if (Model.OrganizationProducts.Count != 0) {
+                                                    foreach (var a in Model.OrganizationProducts) {
+                                                        <li class="list-group-item">
+                                                            <strong>@a.Name</strong> <br />
+                                                            <small>@a.Description</small>
+                                                        </li>
+                                                    }
+                                                } else {
+                                                    <li class="list-group-item">
+                                                        No information.
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+
+                                    <div class="col-6 pl-2">
+                                        <label>Services</label>
+                                        <ul class="list-group">
+                                            @{ if (Model.OrganizationServices.Count != 0) {
+                                                    foreach (var a in Model.OrganizationServices) {
+                                                        <li class="list-group-item">
+                                                            <strong>@a.Name</strong> <br />
+                                                            <small>@a.Description</small>
+                                                        </li>
+                                                    }
+                                                } else {
+                                                    <li class="list-group-item">
+                                                        No information.
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+

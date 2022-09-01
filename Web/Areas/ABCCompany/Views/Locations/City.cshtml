@@ -1,0 +1,116 @@
+﻿
+@{
+    ViewBag.Title = "City";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+}
+
+@section Scripts{
+    <script src="~/Content/js/locations/city.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+}
+
+@model Web.Areas.ABCCompany.Data.LocationViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-6">
+                @Model.CountryStateRegion.Name
+            </div>
+            <div class="col-6">
+                <button id="btn-add-city" class="btn btn-sm btn-success fa-pull-right"><i class="fa fa-plus"></i> Add City</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <small>
+                <table class="table table-bordered" id="tbl-cities" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+
+                        @{
+                            var ctr = 0;
+                            foreach (var a in Model.Cities) {
+                                ctr++;
+                                <tr>
+                                    <td class="w-5">@ctr</td>
+                                    <td>@a.Name</td>
+                                    <td class="w-10 text-center">
+                                        <div class="btn-group" role="group">
+                                            <a href="#" class="btn btn-secondary btn-edit" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                            <a href="#" class="btn btn-danger btn-delete" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </small>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-city" tabindex="-1" role="dialog" aria-labelledby="mdl-city" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New City</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new-city">
+                <input type="hidden" class="form-control" id="fld-new-country-state-region-id" name="CountryStateRegionId" value="@Model.CountryStateRegion.Id" data-required="true" />
+                <input type="text" class="form-control" id="fld-new-city-name" name="Name" data-required="true" placeholder="Name" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-city-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-city-save" class="btn btn-success">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-city" tabindex="-1" role="dialog" aria-labelledby="mdl-city" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit City</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit-city">
+                <input type="hidden" class="form-control" id="fld-edit-country-state-region-id" name="CountryStateRegionId" value="@Model.CountryStateRegion.Id" data-required="true" />
+                <input type="hidden" class="form-control" id="fld-edit-city-id" name="Id" data-required="true" />
+                <input type="text" class="form-control" id="fld-edit-city-name" name="Name" data-required="true" placeholder="Name" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-city-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-city-save" class="btn btn-success">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+

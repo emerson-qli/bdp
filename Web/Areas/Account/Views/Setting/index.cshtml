@@ -1,0 +1,97 @@
+﻿
+@{
+    ViewBag.Title = "Setting";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/js/account/setting/index.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+<div class="row justify-content-md-center">
+    <div class="col-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <div class="row">
+                    <div class="col-6 text-left pt-1">
+                        <strong>Settings</strong>
+                    </div>
+                    <div class="col-6">
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="card-body" id="bdy">
+                <div class="row no-gutters">
+
+                    <div class="col-12">
+                        <label>Email</label>
+                        <input type="hidden" name="Id" value="@Model.User.Id" />
+                        <input type="hidden" name="RoleId" value="@Model.User.RoleId" />
+                        <input class="form-control" type="text" name="Username" value="@Model.User.Username" data-required="true" />
+                    </div>
+                    <div class="col-12 pt-2">
+                        <label>Password</label>
+                        <input class="form-control" type="password" name="Password" value="" data-required="true" />
+                    </div>
+                    <div class="col-12 text-right pt-4">
+                        <button id="btn-save" class="btn btn-info fa-pull-right"><i class="fa fa-edit"></i> Save</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>
+
+
+<div class="modal fade" id="mdl-photo" tabindex="-1" role="dialog" aria-labelledby="mdl-photo" aria-hidden="true">
+    <div class="modal-dialog modal modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Photo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-update-photo">
+                <div class="row no-gutters">
+                    <div class="col-6">
+                        <strong>Uploaded file:</strong>
+                        <label class="lbl-file-uploaded" style="margin-bottom:0px !important;"></label><br />
+                        <strong>File name:</strong>
+                        <label class="lbl-file" style="margin-bottom:0px !important;"></label>
+                        <input type="hidden" id="fld-edit-photo-id" name="Id" data-required="true" />
+                        <input type="hidden" id="fld-file-name" name="Photo" data-required="true" />
+                        <input type="hidden" id="fld-original-file-name" name="PhotoOriginalFileName" data-required="true" />
+                    </div>
+                    <div class="col-6 pl-1">
+                        <form id="frm-photo-uploader">
+                            <div class="dv-uploader input-group ">
+                                <div class="custom-file">
+                                    <input type="file" name="file" class="custom-file-input f12" id="fle-photo-upload">
+                                    <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="dv-viewer">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-photo-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

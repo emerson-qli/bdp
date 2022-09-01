@@ -1,0 +1,371 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9FD16166-C163-4BB6-BA50-A1F69E8CAD69}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Service</RootNamespace>
+    <AssemblyName>Service</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Dropbox.Api, Version=4.0.0.0, Culture=neutral, PublicKeyToken=310f0e82fbb45d01, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dropbox.Api.4.9.0\lib\net45\Dropbox.Api.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Hangfire.Core, Version=1.7.25.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.Core.1.7.25\lib\net45\Hangfire.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Hangfire.SqlServer, Version=1.7.25.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.SqlServer.1.7.25\lib\net45\Hangfire.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlRenderer, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlRenderer.Core.1.5.1-beta1\lib\net45\HtmlRenderer.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlRenderer.PdfSharp, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlRenderer.PdfSharp.1.5.1-beta1\lib\net45\HtmlRenderer.PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="ImageProcessor, Version=2.5.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ImageProcessor.2.5.6\lib\net45\ImageProcessor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="LinqKit, Version=1.1.24.0, Culture=neutral, PublicKeyToken=bc217f8844052a91, processorArchitecture=MSIL">
+      <HintPath>..\packages\LinqKit.1.1.24\lib\net45\LinqKit.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.1.0\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.1.0\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.1.0\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin">
+      <HintPath>..\packages\Microsoft.Owin.3.0.0\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.3.0.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security">
+      <HintPath>..\packages\Microsoft.Owin.Security.2.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.2.1.0\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.2.1.0\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Owin">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Charting, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.Charting.dll</HintPath>
+    </Reference>
+    <Reference Include="Postal">
+      <HintPath>..\packages\Postal.Mvc5.1.2.0\lib\net45\Postal.dll</HintPath>
+    </Reference>
+    <Reference Include="RazorEngine">
+      <HintPath>..\packages\RazorEngine.3.4.1\lib\net45\RazorEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="Rotativa">
+      <HintPath>..\packages\Rotativa.1.6.1\lib\net40\Rotativa.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.License, Version=1.3.8.40, Culture=neutral, PublicKeyToken=b1144360237c8b3f, processorArchitecture=MSIL">
+      <HintPath>..\packages\FreeSpire.PDF.7.2.0\lib\net40\Spire.License.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.Pdf, Version=7.2.6.0, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <HintPath>..\packages\FreeSpire.PDF.7.2.0\lib\net40\Spire.Pdf.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Web.Helpers.dll.1.0.0\lib\Net40\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.2\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.2\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.2\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.2\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.2\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ABCCompany\CityService.cs" />
+    <Compile Include="ABCCompany\CountryService.cs" />
+    <Compile Include="ABCCompany\CustomerService.cs" />
+    <Compile Include="ABCCompany\CountryStateRegionService.cs" />
+    <Compile Include="ABCCompany\SaleService.cs" />
+    <Compile Include="ActionPlan\ActionPlanService.cs" />
+    <Compile Include="ActivityLog\ActivityLogService.cs" />
+    <Compile Include="Activity\ActivityService.cs" />
+    <Compile Include="AnnualPlan\AnnualPlanService.cs" />
+    <Compile Include="ApprovingAuthority\ApprovingAuthorityMemberService.cs" />
+    <Compile Include="ApprovingAuthority\ApprovingAuthorityService.cs" />
+    <Compile Include="Attributes\AllowCrossSiteJsonAttribute.cs" />
+    <Compile Include="Attributes\AuthorizeRoleBaseAttribute.cs" />
+    <Compile Include="Attributes\FileDownloadAttribute.cs" />
+    <Compile Include="AuditCalendar\AuditCalendarService.cs" />
+    <Compile Include="AuditTeam\AuditTeamService.cs" />
+    <Compile Include="AuditUniverse\AuditUniverseService.cs" />
+    <Compile Include="Audit\AuditApprovalService.cs" />
+    <Compile Include="Audit\AuditFindingService.cs" />
+    <Compile Include="Audit\AuditOrganizationBusinessProcessService.cs" />
+    <Compile Include="Audit\AuditOrganizationManagementSystemService.cs" />
+    <Compile Include="Audit\AuditPlanService.cs" />
+    <Compile Include="Audit\AuditPlanSupportingDocumentService.cs" />
+    <Compile Include="Audit\AuditPlanAuditorService.cs" />
+    <Compile Include="Audit\AuditProgramService.cs" />
+    <Compile Include="Audit\AuditScheduleService.cs" />
+    <Compile Include="Audit\AuditService.cs" />
+    <Compile Include="Authentication\AuthenticationService.cs" />
+    <Compile Include="BaseService.cs" />
+    <Compile Include="Department\DepartmentService.cs" />
+    <Compile Include="Division\DivisionService.cs" />
+    <Compile Include="Document\DocumentHelper.cs" />
+    <Compile Include="Document\DocumentLogService.cs" />
+    <Compile Include="Document\DocumentRequestApprovalService.cs" />
+    <Compile Include="Document\DocumentRequestCommentAttachmentService.cs" />
+    <Compile Include="Document\DocumentRequestCommentService.cs" />
+    <Compile Include="Document\DocumentRequestExternalDocumentService.cs" />
+    <Compile Include="Document\DocumentRequestFormService.cs" />
+    <Compile Include="Document\DocumentRequestService.cs" />
+    <Compile Include="Document\DocumentRequestSupportingDocumentService.cs" />
+    <Compile Include="Document\DocumentSettingService.cs" />
+    <Compile Include="Document\DocumentsForChangeRequestsApprovalService.cs" />
+    <Compile Include="Document\DocumentsForChangeRequestsCommentAttachmentService.cs" />
+    <Compile Include="Document\DocumentsForChangeRequestsCommentService.cs" />
+    <Compile Include="Document\DocumentsForChangeRequestsService.cs" />
+    <Compile Include="Document\DocumentsForChangeRequestsSupportingDocumentService.cs" />
+    <Compile Include="Document\ExternalDocumentService.cs" />
+    <Compile Include="Document\PublishedDocumentsApprovalService.cs" />
+    <Compile Include="Document\PublishedDocumentsCommentAttachmentService.cs" />
+    <Compile Include="Document\PublishedDocumentsCommentService.cs" />
+    <Compile Include="Document\PublishedDocumentsService.cs" />
+    <Compile Include="Document\PublishedDocumentsSupportingDocumentService.cs" />
+    <Compile Include="Employee\EmployeeAuditeeService.cs" />
+    <Compile Include="Employee\EmployeeAuditorService.cs" />
+    <Compile Include="Employee\EmployeeCompetencyService.cs" />
+    <Compile Include="Employee\EmployeeContactDetailService.cs" />
+    <Compile Include="Employee\EmployeeDocumentService.cs" />
+    <Compile Include="Employee\EmployeeEducationService.cs" />
+    <Compile Include="Employee\EmployeeExperienceService.cs" />
+    <Compile Include="Employee\EmployeeJobDescriptionService.cs" />
+    <Compile Include="Employee\EmployeeKPIService.cs" />
+    <Compile Include="Employee\EmployeePositionService.cs" />
+    <Compile Include="Employee\EmployeeProgramService.cs" />
+    <Compile Include="Employee\EmployeeQualificationService.cs" />
+    <Compile Include="Employee\EmployeeReportRecipientService.cs" />
+    <Compile Include="Employee\EmployeeReportService.cs" />
+    <Compile Include="Employee\EmployeeRoleAndResponsibilityService.cs" />
+    <Compile Include="Employee\EmployeeService.cs" />
+    <Compile Include="Enum\EnumService.cs" />
+    <Compile Include="Helper\MyCustomDateProvider.cs" />
+    <Compile Include="Helper\PDFHelper.cs" />
+    <Compile Include="Helper\PermissionHelper.cs" />
+    <Compile Include="Helper\ToolStripService.cs" />
+    <Compile Include="Import\ImportCSVService.cs" />
+    <Compile Include="InternalAudit\InternalAuditService.cs" />
+    <Compile Include="ISMSRiskRegister\ISMSRiskRegisterService.cs" />
+    <Compile Include="IssueTracker\IssueTrackerService.cs" />
+    <Compile Include="KnowledgeHub\KnowledgeHubStandardService.cs" />
+    <Compile Include="Level\LevelService.cs" />
+    <Compile Include="Logger\LoggerService.cs" />
+    <Compile Include="Mail\MailService.cs" />
+    <Compile Include="Mail\MailTemplateInitiateReset.cs" />
+    <Compile Include="Notifications\NotificationService.cs" />
+    <Compile Include="Notification\NotificationService.cs" />
+    <Compile Include="Organization\OrganizationBusinessProcessInteractingDepartmentService.cs" />
+    <Compile Include="Organization\OrganizationBusinessProcessService.cs" />
+    <Compile Include="Organization\OrganizationBusinessProcessStepService.cs" />
+    <Compile Include="Organization\OrganizationBusinessProcessSubProcessService.cs" />
+    <Compile Include="Organization\OrganizationChartService.cs" />
+    <Compile Include="Organization\OrganizationComplianceAccessibleDepartmentService.cs" />
+    <Compile Include="Organization\OrganizationComplianceCertificateService.cs" />
+    <Compile Include="Organization\OrganizationComplianceService.cs" />
+    <Compile Include="Organization\OrganizationContextExternalIssueService.cs" />
+    <Compile Include="Organization\OrganizationContextInternalIssueService.cs" />
+    <Compile Include="Organization\OrganizationContextPESTLEService.cs" />
+    <Compile Include="Organization\OrganizationContextService.cs" />
+    <Compile Include="Organization\OrganizationContextStakeHolderService.cs" />
+    <Compile Include="Organization\OrganizationContextSWOTService.cs" />
+    <Compile Include="Organization\OrganizationDashboardService.cs" />
+    <Compile Include="Organization\OrganizationManagementSystemService.cs" />
+    <Compile Include="Organization\OrganizationPolicyService.cs" />
+    <Compile Include="Organization\OrganizationProcessService.cs" />
+    <Compile Include="Organization\OrganizationProductService.cs" />
+    <Compile Include="Organization\OrganizationProfileService.cs" />
+    <Compile Include="Organization\OrganizationReportService.cs" />
+    <Compile Include="Organization\OrganizationService.cs" />
+    <Compile Include="Organization\OrganizationServiceService.cs" />
+    <Compile Include="Organization\OrganizationSubsidiaryService.cs" />
+    <Compile Include="Organization\OrganizationValueService.cs" />
+    <Compile Include="Organization\OrganizationVisionService.cs" />
+    <Compile Include="Organization\PositionService.cs" />
+    <Compile Include="Persistence\UserPersistence.cs" />
+    <Compile Include="Persistence\UserPersistenceViewService.cs" />
+    <Compile Include="Position\PositionService.cs" />
+    <Compile Include="ProcessRiskRegister\ProcessRiskRegisterService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rating\RatingService.cs" />
+    <Compile Include="Reviewer\ReviewerMemberService.cs" />
+    <Compile Include="Reviewer\ReviewerService.cs" />
+    <Compile Include="RiskAndOpportunityRegister\RiskAndOpportunityRegisterService.cs" />
+    <Compile Include="RoleTemplate\RoleTemplateService.cs" />
+    <Compile Include="RoleTemplate\RoleTemplateViewService.cs" />
+    <Compile Include="Role\RoleService.cs" />
+    <Compile Include="Setting\AuditAuditorService.cs" />
+    <Compile Include="Setting\AuditCategoryService.cs" />
+    <Compile Include="Setting\BusinessRiskTypeService.cs" />
+    <Compile Include="Setting\ComptencyTypeService.cs" />
+    <Compile Include="Setting\DocumentCategoryService.cs" />
+    <Compile Include="Setting\DocumentClassificationService.cs" />
+    <Compile Include="Setting\DocumentGroupService.cs" />
+    <Compile Include="Setting\DocumentQualificationService.cs" />
+    <Compile Include="Setting\DocumentSectionService.cs" />
+    <Compile Include="Setting\IssueCategoryService.cs" />
+    <Compile Include="Setting\IssueTypeService.cs" />
+    <Compile Include="Setting\SettingEmployeeNotificationRecipientService.cs" />
+    <Compile Include="Setting\SettingService.cs" />
+    <Compile Include="Token\TokenService.cs" />
+    <Compile Include="Upload\UploadService.cs" />
+    <Compile Include="User\UserService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj">
+      <Project>{28b6244f-90a4-4bab-98ce-97514ccf9275}</Project>
+      <Name>Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Framework\Framework.csproj">
+      <Project>{9fac69dd-ec08-48ea-86a6-4a6fcd959f5b}</Project>
+      <Name>Framework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="App_Browsers\qt.browser" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NuGet.exe" />
+    <Content Include="Rotativa\libeay32.dll" />
+    <Content Include="Rotativa\libgcc_s_dw2-1.dll" />
+    <Content Include="Rotativa\mingwm10.dll" />
+    <Content Include="Rotativa\README.txt" />
+    <Content Include="Rotativa\ssleay32.dll" />
+    <Content Include="Rotativa\wkhtmltopdf.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>4</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Word">
+      <Guid>{00020905-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>8</VersionMajor>
+      <VersionMinor>4</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

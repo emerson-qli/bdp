@@ -1,0 +1,628 @@
+﻿@{
+    var settingService = new Service.Setting.SettingService();
+    var permissionHelper = new Service.Helper.PermissionHelper();
+    var version = "1.0";
+    try {
+        version = typeof(Web.MvcApplication).Assembly.GetName().Version.ToString();
+    } catch (Exception exception) {
+
+    }
+  
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Build & Dox - @ViewBag.Title</title>
+    @RenderSection("Styles", required: false)
+    <link href="~/Content/lib/sbadmin/sb-admin-2.css" rel="stylesheet" />
+    <link href="~/Content/lib/font-awesome/css/all.css" rel="stylesheet" />
+    <link href="~/Content/lib/amaran/amaran.css" rel="stylesheet" />
+    <link href="~/Content/lib/selectize/selectize.bootstrap3.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
+    <link href="~/Content/css/override.css" rel="stylesheet" />
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+            <div class="dv-menu-logo">
+                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="~/Dashboard/Default">
+                    <div class="sidebar-brand-text mx-3 pt-1">
+                        <img src="~/Content/img/bnd-logo-inlay.png" style="height: 60px;" />
+                    </div>
+                </a>
+            </div>
+
+            <div class="dv-menu-logo-collapse d-none text-center">
+                <img src="~/Content/img/bnd-logo-b.png" style="height: 60px;" />
+            </div>
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.MainDashboard)) {
+                <!-- Nav Item - Dashboard -->
+                <li class="nav-item active" data-area="Dashboard" data-accordion="none">
+                    <a class="nav-link" href="~/Dashboard/Default">
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+            }
+
+
+            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.OrganizationView)) {
+                <!-- Nav Item - Pages Collapse Menu -->
+                <li class="nav-item" data-area="Organization" data-accordion="dv-organization">
+                    <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse" data-target="#dv-organization"
+                       aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-sitemap"></i>
+                        <span>Organization</span>
+                    </a>
+                    <div id="dv-organization" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.OrganizationDashboard)) {
+                                <a class="collapse-item" href="~/Organization/Dashboard">Dashboard</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.OrganizationProfileView)) {
+                                <a class="collapse-item" href="~/Organization/Profile">Profile</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.OrganizationContextView)) {
+                                <a class="collapse-item" href="~/Organization/Context">Context</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.OrganizationReportView)) {
+                                <a class="collapse-item" href="~/Organization/Reports">Reports</a>
+                            }
+                        </div>
+                    </div>
+                </li>
+            }
+
+            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.InformationManagementView)) {
+                <!-- Nav Item - Pages Collapse Menu -->
+                <li class="nav-item" data-area="InformationManagement" data-accordion="dv-information-management">
+                    <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse" data-target="#dv-information-management"
+                       aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-tasks"></i>
+                        <span>Information</span>
+                    </a>
+                    <div id="dv-information-management" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.InformationManagementDashboard)) {
+                                <a class="collapse-item" href="~/InformationManagement/Dashboard">Dashboard</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.InformationManagementDocumentsViews)) {
+                                <a class="collapse-item" href="~/InformationManagement/Documents">Documents</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.InformationManagementDocumentRequestsView)) {
+                                <a class="collapse-item" href="~/InformationManagement/DocumentRequests">Document Requests</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.ExternalDocumentView)) {
+                                <a class="collapse-item" href="~/InformationManagement/ExternalDocument">External Document</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.InformationManagementDocumentChangeView)) {
+                                <a class="collapse-item" href="~/InformationManagement/ChangeRequests">Change Requests</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.InformationManagementDocumentObsoletionView)) {
+                                <a class="collapse-item" href="~/InformationManagement/DocumentObsoletion">Document Obsoletion</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.InformationManagementDocumentSettingsView)) {
+                                <a class="collapse-item" href="~/InformationManagement/DocumentSettings">Document Settings</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.InformationManagementDocumentReportView)) {
+                                <a class="collapse-item" href="~/InformationManagement/Reports">Reports</a>
+                            }
+                        </div>
+                    </div>
+                </li>
+            }
+
+
+            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.InformationManagementView)) {
+                <!-- Nav Item - Pages Collapse Menu -->
+                <li class="nav-item" data-area="Forms" data-accordion="dv-forms">
+                    <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse" data-target="#dv-forms"
+                       aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Forms</span>
+                    </a>
+                    <div id="dv-forms" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="~/Forms/Main">Main</a>
+                        </div>
+                    </div>
+                </li>
+            }
+
+            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.HumanCapitalView)) {
+                <li class="nav-item" data-area="HumanCapital" data-accordion="dv-human-capital">
+                    <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse" data-target="#dv-human-capital"
+                       aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-users"></i>
+                        <span>Human Capital</span>
+                    </a>
+                    <div id="dv-human-capital" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.HumanCapitalDashboard)) {
+                                <a class="collapse-item" href="~/HumanCapital/Dashboard">Dashboard</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.HumanCapitalDivisionView)) {
+                                <a class="collapse-item" href="~/HumanCapital/Divisions">Divisions</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.HumanCapitalDepartmentView)) {
+                                <a class="collapse-item" href="~/HumanCapital/Departments">Departments</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.HumanCapitalPositionView)) {
+                                <a class="collapse-item" href="~/HumanCapital/Positions">Designations</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.HumanCapitalEmployeeView)) {
+                                <a class="collapse-item" href="~/HumanCapital/Employees">Employees</a>
+                            }
+                        </div>
+                    </div>
+                </li>
+            }
+
+            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.KnowledgeHubView)) {
+                <!-- Nav Item - Pages Collapse Menu -->
+                <li class="nav-item" data-area="KnowledgeHub" data-accordion="dv-knowledge-hub">
+                    <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse" data-target="#dv-knowledge-hub"
+                       aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-book"></i>
+                        <span>Knowledge Hub</span>
+                    </a>
+                    <div id="dv-knowledge-hub" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.KnowledgeHubStandard)) {
+                                <a class="collapse-item" href="~/KnowledgeHub/Standard">Standards</a>
+                            }
+                        </div>
+                    </div>
+                </li>
+            }
+
+            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.AuditManagementView)) {
+                <li class="nav-item" data-area="AuditManagement" data-accordion="dv-audit-management">
+                    <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse" data-target="#dv-audit-management"
+                       aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-book-reader"></i>
+                        <span>Audit Management</span>
+                    </a>
+                    <div id="dv-audit-management" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.AuditManagementDashboard)) {
+                                <a class="collapse-item" href="~/AuditManagement/Dashboard">Dashboard</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.AuditManagementAuditUniverse)) {
+                                <a class="collapse-item" href="~/AuditManagement/AuditUniverse">Audit Universe</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.AuditManagementAuditTerms)) {
+                                <a class="collapse-item" href="~/AuditManagement/AuditTeams">Audit Teams</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.AuditManagementInternalAudit)) {
+                                <a class="collapse-item" href="~/AuditManagement/InternalAudit">Internal Audit</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.AuditManagementAnnualPlan)) {
+                                <a class="collapse-item" href="~/AuditManagement/AnnualPlans">Annual Plan</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.AuditManagementAuditCalendar)) {
+                                <a class="collapse-item" href="~/AuditManagement/AuditCalendar">Audit Calendar</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.AuditManagementIssueTracker)) {
+                                <a class="collapse-item" href="~/AuditManagement/IssueTracker">Issue Tracker</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.AuditManagementActionPlan)) {
+                                <a class="collapse-item" href="~/AuditManagement/ActionPlan">Action Plan</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.AuditManagementReports)) {
+                                <a class="collapse-item" href="~/AuditManagement/Reports">Reports</a>
+                            }
+                        </div>
+                    </div>
+                </li>
+            }
+
+            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.RiskManagementView)) {
+                <li class="nav-item" data-area="RiskManagement" data-accordion="dv-risk-management">
+                    <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse" data-target="#dv-risk-management"
+                       aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Risk Management</span>
+                    </a>
+                    <div id="dv-risk-management" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.RiskManagementDashboard)) {
+                                <a class="collapse-item" href="~/RiskManagement/Dashboard">Dashboard</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.RiskManagementOpportunityRegister)) {
+                                <a class="collapse-item" href="~/RiskManagement/RiskAndOpportunityRegister">Risk & Opportunity</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.RiskManagementISMSRiskRegister)) {
+                                <a class="collapse-item" href="~/RiskManagement/ISMSRiskRegister">ISMS Risk Register</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.RiskManagementProcessRiskRegister)) {
+                                <a class="collapse-item" href="~/RiskManagement/ProcessRiskRegister">Process Risk Register</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.RiskManangementReports)) {
+                                <a class="collapse-item" href="~/RiskManagement/Reports">Reports</a>
+                            }
+                        </div>
+                    </div>
+                </li>
+            }
+
+            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingView)) {
+                <li class="nav-item" data-area="Setting" data-accordion="dv-setting">
+                    <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse" data-target="#dv-setting"
+                       aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                    <div id="dv-setting" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingApprovingAuthority)) {
+                                <a class="collapse-item" href="~/Setting/Approvers">Approving Authority</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingAuditAuditors)) {
+                                <a class="collapse-item" href="~/Setting/AuditAuditors">Auditors</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingAuditCategory)) {
+                                <a class="collapse-item" href="~/Setting/AuditCategory">Audit Categories</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingBusinessRiskTypes)) {
+                                <a class="collapse-item" href="~/Setting/BusinessRiskTypes">Business Risk Types</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingDocumentCategories)) {
+                                <a class="collapse-item" href="~/Setting/DocumentCategories">Document Categories</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingDocumentClassification)) {
+                                <a class="collapse-item" href="~/Setting/DocumentClassification">Document Classification</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingDocumentQualifications)) {
+                                <a class="collapse-item" href="~/Setting/DocumentQualifications">Document Qualifications</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingDocumentSections)) {
+                                <a class="collapse-item" href="~/Setting/DocumentSections">Document Sections</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingDocumentTypes)) {
+                                <a class="collapse-item" href="~/Setting/DocumentTypes">Document Types</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingCompetencyTypes)) {
+                                <a class="collapse-item" href="~/Setting/CompetencyTypes">Competency Types</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingGeneral)) {
+                                <a class="collapse-item" href="~/Setting/General">General</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingIssueCategory)) {
+                                <a class="collapse-item" href="~/Setting/IssueCategory">Issue Categories</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingIssueTypes)) {
+                                <a class="collapse-item" href="~/Setting/IssueTypes">Issue Types</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingLevel)) {
+                                <a class="collapse-item" href="~/Setting/Levels">Levels</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingPrintSettings)) {
+                                <a class="collapse-item" href="~/Setting/PrintSettings">Print Settings</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SettingRatings)) {
+                                <a class="collapse-item" href="~/Setting/Ratings">Ratings</a>
+                            }
+                        </div>
+                    </div>
+                </li>
+            }
+            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SystemView)) {
+                <li class="nav-item" data-area="System" data-accordion="dv-system">
+                    <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse" data-target="#dv-system"
+                       aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-user-cog"></i>
+                        <span>System</span>
+                    </a>
+                    <div id="dv-system" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SystemRole)) {
+                                <a class="collapse-item" href="~/System/Roles">Roles</a>
+                            }
+                            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.SystemRole)) {
+                                <a class="collapse-item" href="~/System/Users">User</a>
+                            }
+                        </div>
+                    </div>
+                </li>
+            }
+
+
+            @if (permissionHelper.GetPermission(Domain.Enums.ApplicationElement.Administration)) {
+                <li class="nav-item" data-area="Administration" data-accordion="dv-administration">
+                    <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse" data-target="#dv-administration"
+                       aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>Administration</span>
+                    </a>
+                    <div id="dv-administration" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="~/Administration/UserLogs">User Logs</a>
+                        </div>
+                    </div>
+                </li>
+            }
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block" />
+
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
+
+            <div class="text-center">
+                <span class="small" style="color: #fff;font-size:11px">@version</span>
+            </div>
+
+        </ul>
+        <!-- End of Sidebar -->
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+                        <li class="nav-item dropdown no-arrow d-sm-none">
+                            <a class="nav-link dropdown-toggle" href="javascript:void(0);" id="searchDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-search fa-fw"></i>
+                            </a>
+                            <!-- Dropdown - Messages -->
+                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+                                 aria-labelledby="searchDropdown">
+                                <form class="form-inline mr-auto w-100 navbar-search">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-light border-0 small"
+                                               placeholder="Search for..." aria-label="Search"
+                                               aria-describedby="basic-addon2">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="button">
+                                                <i class="fas fa-search fa-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+
+                        <li class="nav-item dropdown no-arrow mx-1 show">
+                            <a class="nav-link dropdown-toggle" href="javascript:void(0);" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-bell fa-fw"></i>
+                                <!-- Counter - Alerts -->
+                                <span class="badge badge-danger badge-counter"></span>
+                            </a>
+                            <!-- Dropdown - Alerts -->
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in dv-notifications-container" aria-labelledby="alertsDropdown">
+                                <h6 class="dropdown-header">
+                                    Alerts Center
+                                </h6>
+                                <div id="dv-alerts" style="display:contents">
+
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <div class="topbar-divider d-none d-sm-block"></div>
+                        <!-- Nav Item - User Information -->
+
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="javascript:void(0);" id="userDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">@ViewBag.User</span>
+                                <div id="dv-employee-photo"></div>
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                 aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="~/Account/Profile">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile
+                                </a>
+                                <a class="dropdown-item" href="~/Account/Setting">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Settings
+                                </a>
+                                <a class="dropdown-item" href="javascript:void(0);">
+                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Activity Log
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="javascript:void(0);" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Logout
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    @RenderBody()
+
+                </div>
+            </div>
+            <!-- End of Main Content -->
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Qualtum-Link Inc. 2021</span><br />
+                        Works best with <a href="https://www.microsoft.com/en-us/edge" target="_blank">Microsoft Edge</a>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="~/Account/Logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="mdl-confirm" tabindex="-1" role="dialog" aria-labelledby="mdl-confirm" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Confirm Action</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="bdy-action">
+                    <p class="p-message"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-confirm-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="btn-confirm-proceed" class="btn btn-danger">Proceed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="mdl-alert" tabindex="-1" role="dialog" aria-labelledby="mdl-alert" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Error</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="bdy-action">
+                    <p class="p-message"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-alert-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    @*<button type="button" id="btn-alert-contact" class="btn btn-danger">Contact</button>*@
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-file-upload">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">File Uploader</h5>
+                    <button type="button" id="btn-close" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <progress id="file-upload-progress" style="display:none;" max="100" value="0"></progress>
+                    <form id="frm-file-uploader">
+                        <div class="dv-uploader input-group ">
+                            <div class="custom-file">
+                                <input type="hidden" class="fld-user-id" name="userId" />
+                                <input type="file" name="file" class="custom-file-input f12" id="fle-file-upload">
+                                <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="dv-viewer">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/Content/lib/jquery/jquery.min.js"></script>
+    <script src="~/Content/lib/amaran/amaran.js"></script>
+    <script src="~/Content/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Content/lib/jquery/jquery.easing.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+
+    <script src="~/Content/lib/underscore/underscore.js"></script>
+    <script src="~/Content/lib/selectize/selectize.js"></script>
+    <script src="~/Content/lib/sbadmin/sb-admin-2.min.js"></script>
+    <script src="~/Content/js/class/page.js"></script>
+    <script src="~/Content/js/menu.js"></script>
+    <script src="~/Content/lib/moment/moment.js"></script>
+    <script src="~/Content/js/common.js"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+

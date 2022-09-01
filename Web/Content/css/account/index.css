@@ -1,0 +1,43 @@
+﻿input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
+
+::-webkit-input-placeholder {
+    font-size: 12px !important;
+}
+
+body {
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+}
+
+.form-control {
+    border-radius: 15px;
+}
+
+
+.spn-version {
+    font-size: 11px;
+    color: #c0c0c0;
+    font-weight: bold;
+}
+
+.bgm {
+    background-image: url('../../img/bg-login-01.jpeg');
+}
+
+.bgm-2 {
+    background-image: url('../../img/bg-login-02.jpg');
+}
+
+.img1 {
+
+}
+
+.img2 {
+
+}

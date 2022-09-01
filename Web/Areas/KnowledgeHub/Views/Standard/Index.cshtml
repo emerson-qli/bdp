@@ -1,0 +1,237 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/js/knowledge-hub/standard/index.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@model Web.Areas.KnowledgeHub.Data.KnowledgeHubViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-6">
+                Standards
+            </div>
+            <div class="col-6 text-right">
+                <button id="btn-new-standard" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> New Standard</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <small>
+                <table class="table table-bordered" id="tbl-list" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="text-center w-5">#</th>
+                            <th>Name</th>
+                            <th>Management System Type</th>
+                            <th>Department</th>
+                            <th>Author</th>
+                            <th>File</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var ctr = 0;
+                            foreach (var a in Model.KnowledgeHubStandards) {
+                                ctr++;
+                                <tr>
+                                    <td class="text-center w-5">@ctr</td>
+                                    <td>
+                                        @a.Name
+                                        <br />
+                                        <small>@a.Description</small>
+                                    </td>
+                                    <td>@a.ManagementSystemName</td>
+                                    <td>@a.DepartmentName</td>
+                                    <td>@a.EmployeeName</td>
+                                    <td>
+                                        <label class="mr-2"><a target="_blank" href="/content/files/@a.UniqueFileName">@a.OriginalFileName</a></label>
+                                    </td>
+                                    <td class="w-10 text-center">
+                                        <div class="btn-group" role="group">
+                                            <a href="javascript:void(0);" class="btn btn-secondary btn-edit" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                            <a href="javascript:void(0);" class="btn btn-danger btn-delete" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </small>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new" tabindex="-1" role="dialog" aria-labelledby="mdl-new" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">New Standard</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new">
+                <div class="row no-gutters">
+
+                    <div class="col-12 mb-2">
+                        <label>Name</label><br />
+                        <input type="text" class="form-control" id="fld-new-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+
+                    <div class="col-12 mb-2">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-new-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+
+                    <div class="col-12 mb-2">
+                        <label>Department</label>
+                        <select class="fld-departments form-control"></select>
+                        <input type="hidden" name="DepartmentId" id="fld-new-department-id" data-required="true" />
+                        <input type="hidden" name="DepartmentName" id="fld-new-department-name" data-required="true" />
+                    </div>
+
+                    <div class="col-12 mb-2">
+                        <label>Management System</label>
+                        <select class="fld-ms-types form-control"></select>
+                        <input type="hidden" name="ManagementSystemId" id="fld-new-ms-type-id" data-required="true" />
+                        <input type="hidden" name="ManagementSystemName" id="fld-new-ms-type-name" data-required="true" />
+                    </div>
+
+                    <div class="col-12 mb-2">
+                        <label>Author</label>
+                        <select class="fld-employees form-control"></select>
+                        <input type="hidden" name="EmployeeId" id="fld-new-employee-id" data-required="true" />
+                        <input type="hidden" name="EmployeeName" id="fld-new-employee-name" data-required="true" />
+                    </div>
+
+                    <div class="col-12 mb-2">
+                        <hr class="hr-style-1" />
+                    </div>
+
+                    <div class="col-6">
+                        <strong>Uploaded file:</strong>
+                        <label class="lbl-file-uploaded" style="margin-bottom:0px !important;"></label><br />
+                        <strong>File name:</strong>
+                        <label class="lbl-file" style="margin-bottom:0px !important;"></label>
+                        <input type="hidden" id="fld-file-name" name="uniqueFileName" data-required="true" />
+                        <input type="hidden" id="fld-original-file-name" name="OriginalFileName" data-required="true" />
+                    </div>
+
+                    <div class="col-6 pl-1">
+                        <progress id="file-uploadphoto-progress" style="display:none;" max="100" value="0"></progress>
+                        <form id="frm-photo-uploader">
+                            <div class="dv-uploader input-group ">
+                                <div class="custom-file">
+                                    <input type="file" name="file" class="custom-file-input f12" id="fle-photo-upload">
+                                    <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="dv-viewer">
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit" tabindex="-1" role="dialog" aria-labelledby="mdl-edit" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Standard</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit">
+                <div class="row no-gutters">
+                    <div class="col-12 mb-3">
+                        <label>Name</label><br />
+                        <input type="hidden" id="fld-edit-id" data-required="true" name="Id" />
+                        <input type="text" class="form-control" id="fld-edit-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-12">
+                        <label>Description</label><br />
+                        <textarea type="text" class="form-control" id="fld-edit-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                    <div class="col-12 mb-2">
+                        <label>Department</label>
+                        <select class="fld-edit-departments form-control"></select>
+                        <input type="hidden" name="DepartmentId" id="fld-edit-department-id" data-required="true" />
+                        <input type="hidden" name="DepartmentName" id="fld-edit-department-name" data-required="true" />
+                    </div>
+                    <div class="col-12 mb-2">
+                        <label>Management System</label>
+                        <select class="fld-edit-ms-types form-control"></select>
+                        <input type="hidden" name="ManagementSystemId" id="fld-edit-ms-type-id" data-required="true" />
+                        <input type="hidden" name="ManagementSystemName" id="fld-edit-ms-type-name" data-required="true" />
+                    </div>
+                    <div class="col-12">
+                        <label>Author</label>
+                        <select class="fld-edit-employees form-control"></select>
+                        <input type="hidden" name="EmployeeId" id="fld-edit-employee-id" data-required="true" />
+                        <input type="hidden" name="EmployeeName" id="fld-edit-employee-name" data-required="true" />
+                    </div>
+
+
+                    <div class="col-12 mb-2">
+                        <hr class="hr-style-1" />
+                    </div>
+
+                    <div class="col-6">
+                        <strong>Uploaded file:</strong>
+                        <label class="lbl-edit-file-uploaded" style="margin-bottom:0px !important;"></label><br />
+                        <strong>File name:</strong>
+                        <label class="lbl-edit-file" style="margin-bottom:0px !important;"></label>
+                        <input type="hidden" id="fld-edit-file-name" name="uniqueFileName" data-required="true" />
+                        <input type="hidden" id="fld-edit-original-file-name" name="OriginalFileName" data-required="true" />
+                    </div>
+
+                    <div class="col-6 pl-1">
+                        <progress id="file-edit-uploadphoto-progress" style="display:none;" max="100" value="0"></progress>
+                        <form id="frm-edit-photo-uploader">
+                            <div class="dv-uploader input-group ">
+                                <div class="custom-file">
+                                    <input type="file" name="file" class="custom-file-input f12" id="fle-edit-photo-upload">
+                                    <label class="custom-file-label f12" for="file-uploader">Choose file</label>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="dv-viewer">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

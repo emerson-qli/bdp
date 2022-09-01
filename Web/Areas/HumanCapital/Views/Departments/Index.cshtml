@@ -1,0 +1,209 @@
+﻿
+@{
+    ViewBag.Title = "Departments";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/js/human-capital/departments/index.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@model Web.Areas.HumanCapital.Data.HumanCapitalViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-6">
+                Departments
+            </div>
+            <div class="col-6">
+                <button id="btn-add" class="btn btn-sm btn-primary fa-pull-right"><i class="fa fa-plus"></i> Add Department</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <small>
+                <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th>Name</th>
+                            <th>Process Code</th>
+                            <th>Department Code</th>
+                            <th>Level</th>
+                            <th>Division</th>
+                            <th>HOD</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @{
+                            var ctr = 0;
+                            foreach (var a in Model.Departments) {
+                                ctr++;
+                                                <tr>
+                                                    <td class="text-center w-5">@ctr</td>
+                                                    <td>
+                                                        @a.Name<br />
+                                                        <small>@a.Description</small>
+                                                    </td>
+                                                    <td>@a.ProcessCode</td>
+                                                    <td>@a.Code</td>
+                                                    <td>@a.LevelName</td>
+                                                    <td>@a.DivisionName</td>
+                                                    <td>@a.HeadName</td>
+                                                    <td class="w-10 text-center">
+                                                        <div class="btn-group" role="group">
+                                                            <a href="javascript:void(0);" class="btn btn-secondary btn-edit" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                                            <a href="javascript:void(0);" class="btn btn-danger btn-delete" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </small>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new" tabindex="-1" role="dialog" aria-labelledby="mdl-new" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Department</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label>
+                        <input type="text" class="form-control mb-2" id="fld-new-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-6">
+                        <label>Process Code</label>
+                        <input type="text" class="form-control mb-2" id="fld-new-process-code" name="ProcessCode" data-required="true" placeholder="Process Code" />
+                    </div>
+                    <div class="col-6 pl-1">
+                        <label>Department Code</label>
+                        <input type="text" class="form-control mb-2" id="fld-new-code" name="Code" data-required="true" placeholder="Code" />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Description</label>
+                        <textarea type="text" class="form-control mb-2" rows="5" id="fld-new-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-6">
+                        <label>Division</label>
+                        <select class="fld-divisions form-control"></select>
+                        <input type="hidden" name="DivisionName" data-required="true" id="fld-selected-division-name" />
+                        <input type="hidden" name="DivisionId" data-required="true" id="fld-selected-division-id" />
+                    </div>
+                    <div class="col-6 pl-1">
+                        <label>Level</label>
+                        <select class="fld-levels form-control"></select>
+                        <input type="hidden" name="LevelName" data-required="true" id="fld-selected-level-name" />
+                        <input type="hidden" name="LevelId" data-required="true" id="fld-selected-level-id" />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Head</label>
+                        <select class="fld-hods form-control"></select>
+                        <input type="hidden" name="HeadName" id="fld-selected-hod-name" />
+                        <input type="hidden" name="HeadId" id="fld-selected-hod-id" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit" tabindex="-1" role="dialog" aria-labelledby="mdl-edit" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Department</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit">
+                <input type="hidden" id="fld-edit-id" name="Id" data-required="true" />
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label>
+                        <input type="text" class="form-control mb-2" id="fld-edit-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-6">
+                        <label>Process Code</label>
+                        <input type="text" class="form-control mb-2" id="fld-edit-process-code" name="ProcessCode" data-required="true" placeholder="Process Code" />
+                    </div>
+                    <div class="col-6 pl-1">
+                        <label>Code</label>
+                        <input type="text" class="form-control mb-2" id="fld-edit-code" name="Code" data-required="true" placeholder="Code" />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Description</label>
+                        <textarea type="text" class="form-control mb-2" rows="5" id="fld-edit-description" name="Description" data-required="true" placeholder="Description"></textarea>
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-6">
+                        <label>Division</label>
+                        <select class="fld-edit-divisions form-control"></select>
+                        <input type="hidden" name="DivisionName" data-required="true" id="fld-edit-selected-division-name" />
+                        <input type="hidden" name="DivisionId" data-required="true" id="fld-edit-selected-division-id" />
+                    </div>
+                    <div class="col-6 pl-1">
+                        <label>Level</label>
+                        <select class="fld-edit-levels form-control"></select>
+                        <input type="hidden" name="LevelName" data-required="true" id="fld-edit-selected-level-name" />
+                        <input type="hidden" name="LevelId" data-required="true" id="fld-edit-selected-level-id" />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Head</label>
+                        <select class="fld-edit-hods form-control"></select>
+                        <input type="hidden" name="HeadName" id="fld-edit-selected-hod-name" />
+                        <input type="hidden" name="HeadId" id="fld-edit-selected-hod-id" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,133 @@
+﻿
+@{
+    ViewBag.Title = "Departments";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+
+@section Scripts{
+    <script src="~/Content/js/risk-management/process-risk-register/index.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@model Web.Areas.RiskManagement.Data.RiskManagementViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-6">
+                Process Risk Register
+            </div>
+            <div class="col-6">
+
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <small>
+                <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-center w-5">1</td>
+                            <td>Name <br /><small>Sub-name</small></td>
+                            <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam mollis ligula libero, in posuere justo tempor.</td>
+                            <td>On Development</td>
+                            <td class="w-10 text-center">
+                                <div class="btn-group" role="group">
+                                    <a href="javascript:void(0);" class="btn btn-secondary btn-edit" data-id="#" title="Edit"><i class="fa fa-edit"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-danger btn-delete" data-id="#" title="Delete"><i class="fa fa-trash"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </small>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new" tabindex="-1" role="dialog" aria-labelledby="mdl-new" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Department</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new">
+                <label>Name</label>
+                <input type="text" class="form-control mb-2" id="fld-new-name" name="Name" data-required="true" placeholder="Name" />
+
+                <label>Code</label>
+                <input type="text" class="form-control mb-2" id="fld-new-code" name="Code" data-required="true" placeholder="Code" />
+
+                <label>Description</label>
+                <input type="text" class="form-control mb-2" id="fld-new-description" name="Description" data-required="true" placeholder="Description" />
+
+                <label>Division</label>
+                <select class="fld-divisions"></select>
+                <input type="hidden" name="DivisionName" data-required="true" id="fld-selected-division-name" />
+                <input type="hidden" name="DivisionId" data-required="true" id="fld-selected-division-id" />
+
+                <label>Head</label>
+                <select class="fld-hods"></select>
+                <input type="hidden" name="HODName" id="fld-selected-hod-name" />
+                <input type="hidden" name="HODId" id="fld-selected-hod-id" />
+
+                <label>Level</label>
+                <select class="fld-levels"></select>
+                <input type="hidden" name="LevelName" data-required="true" id="fld-selected-level-name" />
+                <input type="hidden" name="LevelId" data-required="true" id="fld-selected-level-id" />
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit" tabindex="-1" role="dialog" aria-labelledby="mdl-edit" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Department</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit">
+                <input type="hidden" id="fld-edit-id" name="Id" data-required="true" />
+                <input type="text" class="form-control mb-2" id="fld-edit-name" name="Name" data-required="true" placeholder="Name" />
+                <input type="text" class="form-control" id="fld-edit-description" name="Description" data-required="true" placeholder="Description" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

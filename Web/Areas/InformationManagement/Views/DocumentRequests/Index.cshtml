@@ -1,0 +1,358 @@
+﻿
+@{
+    ViewBag.Title = "Document Requests";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+
+@section Scripts{
+    <script src="~/Content/js/information-management/document-requests/index.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@model Web.Areas.InformationManagement.Data.InformationManagementViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-6">
+                Document Requests
+            </div>
+            <div class="col-6">
+                <button id="btn-add" class="btn btn-sm btn-primary fa-pull-right"><i class="fa fa-plus"></i> New Request</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <small>
+                <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th>DRCN No.</th>
+                            <th>Title</th>
+                            <th>Created</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            string[] status = {"Draft", "For Approval", "-", "Published", "Cascaded", "Obsolete", "For Revision", "For Revision Approval", "Revised", "For Obsoletion", "For Obsoletion Approval" };
+                            var ctr = 0;
+                            foreach (var a in Model.DocumentRequests.Where(a => a.Tag != Domain.Models.DocumentRequestState.Publish && a.Tag != Domain.Models.DocumentRequestState.Obsolete && a.Tag != Domain.Models.DocumentRequestState.Revised).ToList()) {
+                                ctr++;
+                                <tr>
+                                    <td class="text-center w-5">@ctr</td>
+                                    
+                                    <td class="w-25"><small>@a.DCRN</small></td>
+                                    <td>@a.Name<br />
+                                               <small>@a.DocumentCategoryName - @a.DocumentTypeName</small>
+                                    </td>
+                                    <td>@a.CreatedAt.ToShortDateString()</td>
+                                    <td>@status[Convert.ToInt32(a.Tag)]</td>
+                                    <td class="w-10 text-center">
+                                        <div class="btn-group" role="group">
+                                            <a href="#" class="btn btn-secondary btn-view" data-id="@a.Id" title="Edit"><i class="fa fa-eye"></i></a>
+                                            @if (a.Tag == Domain.Models.DocumentRequestState.Draft || a.Tag == Domain.Models.DocumentRequestState.DraftRevision || a.Tag == Domain.Models.DocumentRequestState.DraftObsoletion) {
+                                                <a href="javascript:void(0);" class="btn btn-secondary btn-edit" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                                <a href="javascript:void(0);" class="btn btn-danger btn-delete" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </small>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new" tabindex="-1" role="dialog" aria-labelledby="mdl-new" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Document Request</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new">
+                <div class="row no-gutters f12">
+                    <div class="col-6">
+                        <div class="row no-gutters">
+                            <div class="col-6">
+                                <label>Category</label>
+                                <select class="fld-document-categories"></select>
+                                <input type="hidden" name="EmployeeId" id="fld-new-employee-id" data-required="true" value="@Model.Employee.Id" />
+                                <input type="hidden" name="EmployeeName" id="fld-new-employee-name" data-required="true" value="@Model.Employee.Fullname" />
+                                <input type="hidden" name="DepartmentName" id="fld-new-department-name" data-required="true" value="@Model.Position.DepartmentName" />
+                                <input type="hidden" name="DepartmentId" id="fld-new-department-id" data-required="true" value="@Model.Position.DepartmentId" />
+                                <input type="hidden" name="DocumentCategoryId" id="fld-new-document-category-id" data-required="true" />
+                                <input type="hidden" name="DocumentCategoryName" id="fld-new-document-category-name" data-required="true" />
+                                <input type="hidden" name="LevelId" id="fld-new-level-id" data-required="true" />
+                                <input type="hidden" name="LevelName" id="fld-new-level-name" data-required="true" />
+                            </div>
+                            <div class="col-6 pl-2 d-none" id="dv-document-type">
+                                <label>Type</label>
+                                <select class="fld-document-types"></select>
+                                <input type="hidden" name="DocumentTypeId" id="fld-new-document-type-id" data-required="true" />
+                                <input type="hidden" name="DocumentTypeName" id="fld-new-document-type-name" data-required="true" />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Document Number</label>
+                                <div class="row no-gutters">
+
+                                    <div class="col-3 pr-1 dv-company-code">
+                                        <input type="text" class="form-control" name="CompanyCode" id="fld-new-company-code" value="@Model.Organization.Code" disabled />
+                                    </div>
+
+                                    <div class="col-3 pr-1 dv-document-type-prefix">
+                                        <input type="text" class="form-control" name="DocumentPrefix" id="fld-new-document-type-prefix" disabled />
+                                    </div>
+
+                                    <div class="col-3 pr-1 dv-department-code">
+                                        <input type="text" class="form-control" name="DepartmentCode" id="fld-new-department-code" disabled />
+                                    </div>
+
+                                    <div class="col-3 dv-prefix-number">
+                                        <select class="fld-selected-prefix-number form-control"></select>
+                                    </div>
+
+                                </div>
+                                <input type="hidden" name="DocumentControlNumber" id="fld-new-document-control-number" class="form-control pt-2" data-required="true" disabled />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Title</label>
+                                <input type="text" class="form-control" name="Name" data-required="true" id="fld-new-name" />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Purpose</label>
+                                <textarea type="text" class="form-control" name="Purpose" data-required="true" id="fld-new-purpose"></textarea>
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Sections</label>
+                                <select class="fld-sections"></select>
+                                <input type="hidden" name="SectionId" id="fld-new-section-id" data-required="true" />
+                                <input type="hidden" name="SectionName" id="fld-new-section-name" data-required="true" />
+                            </div>
+                            <div class="col-6 pt-2">
+                                <label>Qualifications</label>
+                                <select class="fld-qualifications"></select>
+                                <input type="hidden" name="QualificationId" id="fld-new-qualification-id" data-required="true" />
+                                <input type="hidden" name="QualificationName" id="fld-new-qualification-name" data-required="true" />
+                            </div>
+                            <div class="col-6 pl-2 pt-2">
+                                <label>Access Level</label>
+                                <select class="fld-access-level"></select>
+                                <input type="hidden" name="AccessLevelId" id="fld-new-access-level-id" data-required="true" />
+                                <input type="hidden" name="AccessLevelName" id="fld-new-access-level-name" data-required="true" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 pl-2">
+                        <div class="row no-gutters">
+                            <div class="col-12">
+                                <label>Review Period</label>
+                                <select class="fld-review-period">
+                                    <option value="">-</option>
+                                    <option value="Monthly">Monthly</option>
+                                    <option value="Quarterly">Quarterly</option>
+                                    <option value="6 Months">6 Months</option>
+                                    <option value="Yearly">Yearly</option>
+                                </select>
+                                <input type="hidden" name="ReviewPeriod" id="fld-new-review-period" data-required="true" />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Department</label>
+                                <select class="fld-departments form-control"></select>
+                                <input type="hidden" id="fld-department-id" name="DepartmentId" data-required="true" />
+                                <input type="hidden" id="fld-department-name" name="DepartmentName" data-required="true" />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Reviewers</label>
+                                <select class="fld-reviewers"></select>
+                                <input type="hidden" name="ReviewerSetId" id="fld-new-reviewer-id" data-required="true" />
+                                <input type="hidden" name="ReviewerSetName" id="fld-new-reviewer-name" data-required="true" />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Approvers</label>
+                                <select class="fld-approvers"></select>
+                                <input type="hidden" name="ApproverSetId" id="fld-new-approver-id" data-required="true" />
+                                <input type="hidden" name="ApproverSetName" id="fld-new-approver-name" data-required="true" />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Publishers</label>
+                                <select class="fld-publishers"></select>
+                                <input type="hidden" name="PublisherSetId" id="fld-new-publisher-id" data-required="true" />
+                                <input type="hidden" name="PublisherSetName" id="fld-new-publisher-name" data-required="true" />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Management System Type</label>
+                                <select class="fld-ms-types"></select>
+                                <input type="hidden" name="OrganizationManagementSystemId" id="fld-new-ms-type-id" data-required="true" />
+                                <input type="hidden" name="OrganizationManagementSystemName" id="fld-new-ms-type-name" data-required="true" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-save" class="btn btn-primary">Save as Draft</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="mdl-edit" tabindex="-1" role="dialog" aria-labelledby="mdl-edit" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Document Request</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit">
+                <div class="row no-gutters f12">
+                    <div class="col-6">
+                        <div class="row no-gutters">
+                            <div class="col-6">
+                                <label>Category</label>
+                                <select class="fld-edit-document-categories"></select>
+                                <input type="hidden" name="Id" id="fld-edit-id" data-required="true" />
+                                <input type="hidden" name="DCRN" id="fld-edit-dcrn" data-required="true" />
+                                <input type="hidden" name="EmployeeId" id="fld-edit-employee-id" data-required="true" />
+                                <input type="hidden" name="EmployeeName" id="fld-edit-employee-name" data-required="true"/>
+                                <input type="hidden" name="DocumentCategoryId" id="fld-edit-document-category-id" data-required="true" />
+                                <input type="hidden" name="DocumentCategoryName" id="fld-edit-document-category-name" data-required="true" />
+                                <input type="hidden" name="LevelId" id="fld-edit-level-id" data-required="true" />
+                                <input type="hidden" name="LevelName" id="fld-edit-level-name" data-required="true" />
+                                <input type="hidden" name="Tag" id="fld-edit-tag" data-required="true" />
+                            </div>
+                            <div class="col-6 pl-2 d-none" id="dv-edit-document-type">
+                                <label>Type</label>
+                                <select class="fld-edit-document-types"></select>
+                                <input type="hidden" name="DocumentTypeId" id="fld-edit-document-type-id" data-required="true" />
+                                <input type="hidden" name="DocumentTypeName" id="fld-edit-document-type-name" data-required="true" />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Document Number</label>
+                                <div class="row no-gutters">
+
+                                    <div class="col-3 pr-1 dv-edit-company-code">
+                                        <input type="text" class="form-control" name="CompanyCode" id="fld-edit-company-code" disabled />
+                                    </div>
+
+                                    <div class="col-3 pr-1 dv-edit-document-type-prefix">
+                                        <input type="text" class="form-control" name="DocumentPrefix" id="fld-edit-document-type-prefix" disabled />
+                                    </div>
+
+                                    <div class="col-3 pr-1 dv-edit-department-code">
+                                        <input type="text" class="form-control" name="DepartmentCode" id="fld-edit-department-code" disabled />
+                                    </div>
+
+                                    <div class="col-3 dv-edit-prefix-number">
+                                        <select class="fld-edit-selected-prefix-number form-control"></select>
+                                        <input type="hidden" class="form-control" id="fld-edit-selected-prefix-number" />
+                                    </div>
+
+                                </div>
+                                <input type="hidden" name="DocumentControlNumber" id="fld-edit-document-control-number" class="form-control pt-2" data-required="true" disabled />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Title</label>
+                                <input type="text" class="form-control" name="Name" data-required="true" id="fld-edit-name" />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Purpose</label>
+                                <textarea type="text" class="form-control" name="Purpose" data-required="true" id="fld-edit-purpose"></textarea>
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Sections</label>
+                                <select class="fld-edit-sections"></select>
+                                <input type="hidden" name="SectionId" id="fld-edit-section-id" data-required="true" />
+                                <input type="hidden" name="SectionName" id="fld-edit-section-name" data-required="true" />
+                            </div>
+                            <div class="col-6 pt-2">
+                                <label>Qualifications</label>
+                                <select class="fld-edit-qualifications"></select>
+                                <input type="hidden" name="QualificationId" id="fld-edit-qualification-id" data-required="true" />
+                                <input type="hidden" name="QualificationName" id="fld-edit-qualification-name" data-required="true" />
+                            </div>
+                            <div class="col-6 pl-2 pt-2">
+                                <label>Access Level</label>
+                                <select class="fld-edit-access-level"></select>
+                                <input type="hidden" name="AccessLevelId" id="fld-edit-access-level-id" data-required="true" />
+                                <input type="hidden" name="AccessLevelName" id="fld-edit-access-level-name" data-required="true" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 pl-2">
+                        <div class="row no-gutters">
+                            <div class="col-12">
+                                <label>Review Period</label>
+                                <select class="fld-edit-review-period">
+                                    <option value="">-</option>
+                                    <option value="Monthly">Monthly</option>
+                                    <option value="Quarterly">Quarterly</option>
+                                    <option value="6 Months">6 Months</option>
+                                    <option value="Yearly">Yearly</option>
+                                </select>
+                                <input type="hidden" name="ReviewPeriod" id="fld-edit-review-period" data-required="true" />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Department</label>
+                                <select class="fld-edit-departments form-control"></select>
+                                <input type="hidden" id="fld-edit-department-id" name="DepartmentId" data-required="true" />
+                                <input type="hidden" id="fld-edit-department-name" name="DepartmentName" data-required="true" />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Reviewers</label>
+                                <select class="fld-edit-reviewers"></select>
+                                <input type="hidden" name="ReviewerSetId" id="fld-edit-reviewer-id" data-required="true" />
+                                <input type="hidden" name="ReviewerSetName" id="fld-edit-reviewer-name" data-required="true" />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Approvers</label>
+                                <select class="fld-edit-approvers"></select>
+                                <input type="hidden" name="ApproverSetId" id="fld-edit-approver-id" data-required="true" />
+                                <input type="hidden" name="ApproverSetName" id="fld-edit-approver-name" data-required="true" />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Publishers</label>
+                                <select class="fld-edit-publishers"></select>
+                                <input type="hidden" name="PublisherSetId" id="fld-edit-publisher-id" data-required="true" />
+                                <input type="hidden" name="PublisherSetName" id="fld-edit-publisher-name" data-required="true" />
+                            </div>
+                            <div class="col-12 pt-2">
+                                <label>Management System Type</label>
+                                <select class="fld-edit-ms-types"></select>
+                                <input type="hidden" name="OrganizationManagementSystemId" id="fld-edit-ms-type-id" data-required="true" />
+                                <input type="hidden" name="OrganizationManagementSystemName" id="fld-edit-ms-type-name" data-required="true" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-save" class="btn btn-primary">Update Draft</button>
+            </div>
+        </div>
+    </div>
+</div>
+

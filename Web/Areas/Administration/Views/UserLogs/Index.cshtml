@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewBag.Title = "User Logs";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+@section Scripts{
+    <script src="~/Content/js/administration/user-logs/index.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@model Web.Areas.Administration.Data.AdministrationViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+<div class="row">
+    <div class="col-12 pt-2">
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-6 text-left">
+                        User Logs
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive ">
+                    <small>
+                        <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>User name</th>
+                                    <th>URL</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ 
+                                    var ctr = 0;
+                                    if (Model.ActivityLogs.Count != 0) {
+                                        foreach (var a in Model.ActivityLogs) {
+                                            ctr++;
+                                            <tr>
+                                                <td class="text-center w-10">@ctr</td>
+                                                <td>@a.Username</td>
+                                                <td>
+                                                    @a.PageName <br />
+                                                    <small>@a.PageUrl</small>
+                                                </td>
+                                                <td>@a.CreatedAt</td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

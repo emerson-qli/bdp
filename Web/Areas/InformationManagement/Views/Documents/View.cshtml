@@ -1,0 +1,170 @@
+﻿
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/lib/trumbowyg/trumbowyg.js"></script>
+    <script src="~/Content/js/information-management/documents/view.js"></script>
+
+}
+
+@model Web.Areas.InformationManagement.Data.InformationManagementViewModel
+
+@section Styles{
+    <link href="~/Content/lib/trumbowyg/trumbowyg.css" rel="stylesheet" />
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-6">
+                <button id="btn-back" class="btn btn-sm btn-primary"><i class="fa fa-arrow-alt-circle-left"></i> @Model.DocumentRequest.Name - Details | Published Document</button>
+            </div>
+            <div class="col-6 text-right">
+                <button id="btn-update-draft" class="btn btn-sm btn-primary"><i class="far fa-save"></i> Update Draft</button>
+                <button id="btn-submit" class="btn btn-sm btn-success"><i class="far fa-paper-plane"></i> Submit for Approval</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row no-gutters">
+            <div class="col-3">
+                <small>
+                    <table class="table table-bordered mb-2">
+                        <tr>
+                            <td><strong>Name</strong></td>
+                            <td>@Model.DocumentRequest.Name</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Category</strong></td>
+                            <td>@Model.DocumentRequest.DocumentCategoryName</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Level</strong></td>
+                            <td>@Model.DocumentRequest.LevelName</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Review Period</strong></td>
+                            <td>@Model.DocumentRequest.ReviewPeriod</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Purpose</strong></td>
+                            <td>@Model.DocumentRequest.Purpose</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Prepared By</strong></td>
+                            <td>@Model.DocumentRequest.EmployeeName</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Department</strong></td>
+                            <td>@Model.DocumentRequest.DepartmentName</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Date Prepared</strong></td>
+                            <td>@Model.DocumentRequest.CreatedAt.ToLongDateString()</td>
+                        </tr>
+                        <tr>
+                            <td><strong>MS Type</strong></td>
+                            <td>@Model.DocumentRequest.OrganizationManagementSystemName</td>
+                        </tr>
+                        <tr>
+                            <td class="align-middle"><strong>Supporting Files</strong></td>
+                            <td class="text-right"><button class="btn btn-sm btn-outline-primary"><i class="fa fa-upload"></i></button></td>
+                        </tr>
+                    </table>
+                    <table class="table">
+                        <tr>
+                            <td><strong>Comments</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="h-50 f12">
+                                @foreach (var a in Model.DocumentRequestComments) {
+                                    <p style="border:solid 1px #ecebeb;padding: 5px; border-radius: 10px;">
+                                        <span><strong>@a.CreatedAt.ToLongDateString()</strong></span><br />
+                                        @a.Comment<br /><br />
+                                        <span class="fa-pull-right">- @a.EmployeeName</span><br style="clear:both;" />
+                                    </p>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right new-comment">
+                                <textarea type="text" class="form-control" name="Comment" data-required="true"></textarea>
+                                <input type="hidden" name="DocumentRequestId" data-required="true" value="@Model.DocumentRequest.Id" />
+                                <input type="hidden" name="EmployeeName" data-required="true" value="@Model.Employee.Fullname" />
+                                <input type="hidden" name="EmployeeId" data-required="true" value="@Model.Employee.Id" />
+                                <small><a href="javascript:void(0)"><i class="fa fa-paperclip"></i> Attach File</a></small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right">
+                                <button class="btn btn-primary" id="btn-send-comment">Send</button>
+                            </td>
+                        </tr>
+                    </table>
+                </small>
+            </div>
+            <div class="col-9 pl-2 f12">
+                <div class="row no-gutters">
+                    <div class="col-12 dv-content">
+                        <input type="hidden" name="Id" value="@Model.DocumentRequest.Id" data-required="true" />
+                        <textarea type="text" class="form-control fld-editor" name="Content" rows="7" data-required="true">@Model.DocumentRequest.Content</textarea>
+                    </div>
+                    <div class="col-4 pt-2">
+                        <table class="table table-bordered">
+                            <tr>
+                                <td><strong>Reviewers - @Model.DocumentRequest.ReviewerSetName</strong></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @foreach (var a in Model.Reviewers.OrderByDescending(a => a.EmployeePosition).ToList()) {
+                                        <ul>
+                                            <li>@a.EmployeeName - @a.EmployeePosition</li>
+                                        </ul>
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-4 pl-2 pt-2">
+                        <table class="table table-bordered">
+                            <tr>
+                                <td><strong>Approvers - @Model.DocumentRequest.ApproverSetName</strong></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @foreach (var a in Model.Approvers.OrderByDescending(a => a.EmployeePosition).ToList()) {
+                                        <ul>
+                                            <li>@a.EmployeeName - @a.EmployeePosition</li>
+                                        </ul>
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-4 pl-2 pt-2">
+                        <table class="table table-bordered">
+                            <tr>
+                                <td><strong>Publisher - @Model.DocumentRequest.PublisherSetName</strong></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @foreach (var a in Model.Publishers.OrderByDescending(a => a.EmployeePosition).ToList()) {
+                                        <ul>
+                                            <li>@a.EmployeeName - @a.EmployeePosition</li>
+                                        </ul>
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,400 @@
+﻿@{
+    ViewBag.Title = "Issue Tracker";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/lib/trumbowyg/trumbowyg.js"></script>
+    <script src="~/Content/js/audit-management/issue-tracker/index.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+}
+
+@model Web.Areas.AuditManagement.Data.AuditManagementViewModel
+
+@section Styles{
+    <link href="~/Content/lib/trumbowyg/trumbowyg.css" rel="stylesheet" />
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+<!-- FINDING || RCA || IA || CA || FA  || JOURNEY -->
+<nav>
+    <div class="nav nav-tabs f12" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active show" id="nav-finding-tab" data-toggle="tab" data-hash="#nav-finding" href="#nav-finding" role="tab" aria-controls="nav-finding" aria-selected="true">1. Finding</a>
+        <a class="nav-item nav-link" id="nav-rca-tab" data-toggle="tab" href="#nav-rca" data-hash="#nav-rca" role="tab" aria-controls="nav-rca" aria-selected="false">2. RCA</a>
+        <a class="nav-item nav-link" id="nav-ia-tab" data-toggle="tab" href="#nav-ia" data-hash="#nav-ia" role="tab" aria-controls="nav-ia" aria-selected="false">3. IA</a>
+        <a class="nav-item nav-link" id="nav-ca-tab" data-toggle="tab" href="#nav-ca" data-hash="#nav-ca" role="tab" aria-controls="nav-ca" aria-selected="false">4. CA</a>
+        <a class="nav-item nav-link" id="nav-fa-tab" data-toggle="tab" href="#nav-fa" data-hash="#nav-fa" role="tab" aria-controls="nav-fa" aria-selected="false">5. FA</a>
+        <a class="nav-item nav-link" id="nav-journey-tab" data-toggle="tab" href="#nav-journey" data-hash="#nav-journey" role="tab" aria-controls="nav-journey" aria-selected="false">6. Journey</a>
+    </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade in show active" id="nav-finding" role="tabpanel" aria-labelledby="nav-finding-tab">
+        <div class="f12 pt-2">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="row">
+                        <div class="col-6">
+                            Findings
+                        </div>
+                        <div class="col-6">
+                            <!-- <button id="btn-add" class="btn btn-sm btn-primary fa-pull-right"><i class="fa fa-plus"></i> Add Department</button> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive" id="tbl-finding">
+                        <small>
+                            <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center w-5">1</td>
+                                        <td>
+                                            Sample Team Name<br />
+                                            <small>Sub-name</small>
+                                        </td>
+                                        <td>Duis rutrum tellus vel quam tincidunt scelerisque. Quisque ultricies non odio malesuada rutrum. Cras eget mi.</td>
+                                        <td>On Development</td>
+                                        <td class="w-10 text-center">
+                                            <div class="btn-group" role="group">
+                                                <a href="javascript:void(0);" class="btn btn-secondary btn-edit" data-id="adasdas" title="Edit"><i class="fa fa-edit"></i></a>
+                                                <a href="javascript:void(0);" class="btn btn-danger btn-delete" data-id="asdasda" title="Delete"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-rca" role="tabpanel" aria-labelledby="nav-rca">
+        <div class="f12 pt-2">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="row">
+                        <div class="col-6">
+                            RCA
+                        </div>
+                        <div class="col-6">
+                            <!-- <button id="btn-add" class="btn btn-sm btn-primary fa-pull-right"><i class="fa fa-plus"></i> Add Department</button> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive" id="tbl-rca">
+                        <small>
+                            <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center w-5">1</td>
+                                        <td>
+                                            Sample Team Name<br />
+                                            <small>Sub-name</small>
+                                        </td>
+                                        <td>Duis rutrum tellus vel quam tincidunt scelerisque. Quisque ultricies non odio malesuada rutrum. Cras eget mi.</td>
+                                        <td>On Development</td>
+                                        <td class="w-10 text-center">
+                                            <div class="btn-group" role="group">
+                                                <a href="javascript:void(0);" class="btn btn-secondary btn-edit" data-id="adasdas" title="Edit"><i class="fa fa-edit"></i></a>
+                                                <a href="javascript:void(0);" class="btn btn-danger btn-delete" data-id="asdasda" title="Delete"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-ia" role="tabpanel" aria-labelledby="nav-ia">
+        <div class="f12 pt-2">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="row">
+                        <div class="col-6">
+                            IA
+                        </div>
+                        <div class="col-6">
+                            <!-- <button id="btn-add" class="btn btn-sm btn-primary fa-pull-right"><i class="fa fa-plus"></i> Add Department</button> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive" id="tbl-ia">
+                        <small>
+                            <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center w-5">1</td>
+                                        <td>
+                                            Sample Team Name<br />
+                                            <small>Sub-name</small>
+                                        </td>
+                                        <td>Duis rutrum tellus vel quam tincidunt scelerisque. Quisque ultricies non odio malesuada rutrum. Cras eget mi.</td>
+                                        <td>On Development</td>
+                                        <td class="w-10 text-center">
+                                            <div class="btn-group" role="group">
+                                                <a href="javascript:void(0);" class="btn btn-secondary btn-edit" data-id="adasdas" title="Edit"><i class="fa fa-edit"></i></a>
+                                                <a href="javascript:void(0);" class="btn btn-danger btn-delete" data-id="asdasda" title="Delete"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-ca" role="tabpanel" aria-labelledby="nav-ca">
+        <div class="f12 pt-2">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="row">
+                        <div class="col-6">
+                            CA
+                        </div>
+                        <div class="col-6">
+                            <!-- <button id="btn-add" class="btn btn-sm btn-primary fa-pull-right"><i class="fa fa-plus"></i> Add Department</button> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive" id="tbl-ca">
+                        <small>
+                            <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center w-5">1</td>
+                                        <td>
+                                            Sample Team Name<br />
+                                            <small>Sub-name</small>
+                                        </td>
+                                        <td>Duis rutrum tellus vel quam tincidunt scelerisque. Quisque ultricies non odio malesuada rutrum. Cras eget mi.</td>
+                                        <td>On Development</td>
+                                        <td class="w-10 text-center">
+                                            <div class="btn-group" role="group">
+                                                <a href="javascript:void(0);" class="btn btn-secondary btn-edit" data-id="adasdas" title="Edit"><i class="fa fa-edit"></i></a>
+                                                <a href="javascript:void(0);" class="btn btn-danger btn-delete" data-id="asdasda" title="Delete"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-fa" role="tabpanel" aria-labelledby="nav-fa">
+        <div class="f12 pt-2">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="row">
+                        <div class="col-6">
+                            FA
+                        </div>
+                        <div class="col-6">
+                            <!-- <button id="btn-add" class="btn btn-sm btn-primary fa-pull-right"><i class="fa fa-plus"></i> Add Department</button> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive" id="tbl-fa">
+                        <small>
+                            <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center w-5">1</td>
+                                        <td>
+                                            Sample Team Name<br />
+                                            <small>Sub-name</small>
+                                        </td>
+                                        <td>Duis rutrum tellus vel quam tincidunt scelerisque. Quisque ultricies non odio malesuada rutrum. Cras eget mi.</td>
+                                        <td>On Development</td>
+                                        <td class="w-10 text-center">
+                                            <div class="btn-group" role="group">
+                                                <a href="javascript:void(0);" class="btn btn-secondary btn-edit" data-id="adasdas" title="Edit"><i class="fa fa-edit"></i></a>
+                                                <a href="javascript:void(0);" class="btn btn-danger btn-delete" data-id="asdasda" title="Delete"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-journey" role="tabpanel" aria-labelledby="nav-journey">
+        <div class="f12 pt-2">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="row">
+                        <div class="col-6">
+                            Journey
+                        </div>
+                        <div class="col-6">
+                            <!-- <button id="btn-add" class="btn btn-sm btn-primary fa-pull-right"><i class="fa fa-plus"></i> Add Department</button> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive" id="tbl-journey">
+                        <small>
+                            <table class="table table-bordered" id="tbl-list" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center w-5">1</td>
+                                        <td>
+                                            Sample Team Name<br />
+                                            <small>Sub-name</small>
+                                        </td>
+                                        <td>Duis rutrum tellus vel quam tincidunt scelerisque. Quisque ultricies non odio malesuada rutrum. Cras eget mi.</td>
+                                        <td>On Development</td>
+                                        <td class="w-10 text-center">
+                                            <div class="btn-group" role="group">
+                                                <a href="javascript:void(0);" class="btn btn-secondary btn-edit" data-id="adasdas" title="Edit"><i class="fa fa-edit"></i></a>
+                                                <a href="javascript:void(0);" class="btn btn-danger btn-delete" data-id="asdasda" title="Delete"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new" tabindex="-1" role="dialog" aria-labelledby="mdl-new" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Department</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new">
+                <label>Name</label>
+                <input type="text" class="form-control mb-2" id="fld-new-name" name="Name" data-required="true" placeholder="Name" />
+
+                <label>Code</label>
+                <input type="text" class="form-control mb-2" id="fld-new-code" name="Code" data-required="true" placeholder="Code" />
+
+                <label>Description</label>
+                <input type="text" class="form-control mb-2" id="fld-new-description" name="Description" data-required="true" placeholder="Description" />
+
+                <label>Division</label>
+                <select class="fld-divisions"></select>
+                <input type="hidden" name="DivisionName" data-required="true" id="fld-selected-division-name" />
+                <input type="hidden" name="DivisionId" data-required="true" id="fld-selected-division-id" />
+
+                <label>Head</label>
+                <select class="fld-hods"></select>
+                <input type="hidden" name="HODName" id="fld-selected-hod-name" />
+                <input type="hidden" name="HODId" id="fld-selected-hod-id" />
+
+                <label>Level</label>
+                <select class="fld-levels"></select>
+                <input type="hidden" name="LevelName" data-required="true" id="fld-selected-level-name" />
+                <input type="hidden" name="LevelId" data-required="true" id="fld-selected-level-id" />
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit" tabindex="-1" role="dialog" aria-labelledby="mdl-edit" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Department</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit">
+                <input type="hidden" id="fld-edit-id" name="Id" data-required="true" />
+                <input type="text" class="form-control mb-2" id="fld-edit-name" name="Name" data-required="true" placeholder="Name" />
+                <input type="text" class="form-control" id="fld-edit-description" name="Description" data-required="true" placeholder="Description" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

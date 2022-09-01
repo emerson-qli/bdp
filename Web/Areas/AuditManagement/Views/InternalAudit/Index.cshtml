@@ -1,0 +1,702 @@
+﻿
+@{
+    ViewBag.Title = "Internal Audit";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/js/audit-management/internal-audit/index.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@model Web.Areas.AuditManagement.Data.AuditManagementViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+<nav>
+    <div class="nav nav-tabs f12" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active show" id="nav-program-tab" data-toggle="tab" data-hash="#nav-program" href="#nav-program" role="tab" aria-controls="nav-program" aria-selected="true">Program</a>
+        <a class="nav-item nav-link" id="nav-auditplan-tab" data-toggle="tab" href="#nav-auditplan" data-hash="#nav-auditplan" role="tab" aria-controls="nav-auditplan" aria-selected="false">Audit Plan</a>
+        <a class="nav-item nav-link" id="nav-audit-tab" data-toggle="tab" href="#nav-audit" data-hash="#nav-audit" role="tab" aria-controls="nav-audit" aria-selected="false">Audit</a>
+    </div>
+</nav>
+
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade in show active" id="nav-program" role="tabpanel" aria-labelledby="nav-program-tab">
+        <div class="row no-gutters f12">
+            <div class="col-12 pt-2">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <div class="row">
+                            <div class="col-6 text-left">
+                                <strong>Audit Programs</strong>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row no-gutters">
+                            <div class="col-4">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered f12" id="tbl-list" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th class="align-middle">Name</th>
+                                                <th class="w-5"><button id="btn-add-program" class="btn btn-outline-primary f12 btn-sm"><i class="fa fa-plus"></i></button></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.AuditPrograms.Count > 0) {
+                                                foreach (var a in Model.AuditPrograms) {
+                                                    <tr class="tr-auditprogram" data-id="@a.Id">
+                                                        <td colspan="2">
+                                                            <strong>@a.Name </strong><br />
+                                                            <small>@a.Description</small>
+                                                        </td>
+
+                                                    </tr>
+                                                }
+                                            } else {
+                                                <tr>
+                                                    <td colspan="2">No records found</td>
+                                                </tr>
+                                            }
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-8 pl-2">
+                                <div class="row no-gutters">
+                                    <div class="col-12">
+                                        <table id="tbl-audits" class="table table-bordered d-none">
+                                            <tr>
+                                                <td colspan="3"><button id="btn-delete-audit-program" class="btn btn-danger f12 btn-sm"><i class="fa fa-trash"></i> Remove Program</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="w-25 align-middle"><strong>Name</strong></td>
+                                                <td class="text-left align-middle td-audit-name">
+                                                </td>
+                                                <td class="w-5 align-middle">
+                                                    <input type="hidden" id="hdn-edit-auditprogram-id" />
+                                                    <input type="hidden" id="hdn-edit-audit-id" />
+                                                    <button id="btn-edit-program" class="btn btn-outline-primary f12 btn-sm"><i class="fa fa-pen"></i></button>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td class="w-25 align-top"><strong>MS Type</strong></td>
+                                                <td class="text-left">
+                                                    <ul class="ul-mstypes">
+                                                    </ul>
+                                                </td>
+                                                <td class="w-5"><button id="btn-edit-mstypes" class="btn btn-outline-primary f12 btn-sm"><i class="fa fa-pen"></i></button></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="align-middle"><strong>Schedule</strong></td>
+                                                <td class="text-left align-middle td-audit-Schedule"></td>
+                                                <td class="w-5 align-middle"><button id="btn-edit-auditprogram-schedule" class="btn btn-outline-primary f12 btn-sm"><i class="fa fa-pen"></i></button></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="w-25 align-top"><strong>Processes</strong></td>
+                                                <td class="text-left">
+                                                    <span class="audit-process"></span>
+                                                    <ul class="ul-proceses">
+                                                    </ul>
+                                                </td>
+                                                <td class="w-5"><button id="btn-edit-audit-process" class="btn btn-outline-primary f12 btn-sm"><i class="fa fa-pen"></i></button></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="w-25 align-top"><strong>No. of audit planned</strong></td>
+                                                <td colspan="2" class="text-left align-middle td-total-auditors"></td>
+                                            </tr>
+
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-auditplan" role="tabpanel" aria-labelledby="nav-auditplan-tab">
+        <div class="row no-gutters f12">
+            <div class="col-12 pt-2">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Audit Plan</strong>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row no-gutters">
+                            <div class="col-4">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered f12" id="tbl-audit-plan" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th class="align-middle">Programs</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.AuditPrograms.Count > 0) {
+                                                foreach (var a in Model.AuditPrograms) {
+                                                    <tr class="tr-auditplan" data-id="@a.Id">
+                                                        <td colspan="2">
+                                                            <strong>@a.Name </strong><br />
+                                                            <small>@a.Description</small>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            } else {
+                                                <tr>
+                                                    <td colspan="2">No records found</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-8 pl-2">
+                                <div class="row no-gutters">
+                                    <div class="col-12">
+                                        <input type="hidden" id="hdn-auditplan-id" />
+                                        <h6 class="auditplan-title pl-3 pr-3 pt-2"></h6>
+                                    </div>
+                                    <div class="col-12">
+                                        <ul class="auditplan-content list-group pt-2 pr-3 pl-3"></ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-audit" role="tabpanel" aria-labelledby="nav-audit-tab">
+        <div class="row no-gutters f12">
+            <div class="col-4 pt-2">
+                <div class="card shadow mb-4">
+                    <div class="row no-gutters">
+                        <div class="col m-3">
+                            <label>Audit Categories</label>
+                            <select class="form-control fld-audited"></select>
+                        </div>
+                    </div>
+                    <div class="row no-gutters">
+                        <div class="col ml-2 mr-2 p-2">
+                            <ul class="list-group pb-2 ul-audited">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8 pt-2 pl-2">
+                <div class="card shadow mb-4 d-none" id="dv-audited">
+                    <div class="card-body">
+                        <div class="row no-gutters">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-6 text-left">
+                                        <div class="m-3">
+                                            <span class="audited-title"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <button id="btn-audit-info" class="btn btn-primary btn-view-audit" data-div="dv-audit-info">Audit Info</button>
+                                        <button id="btn-audit-findings" class="btn btn-outline-primary btn-view-audit" data-div="dv-audit-finding">Audit Findings</button> <br />
+                                       
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="pb-2">
+                                            <button id="btn-add-audit-findings" class="btn btn-primary d-none"><i class="fa fa-plus"></i> Add Findings</button>
+                                        </div>
+                                        <div class="dv dv-audit-info">
+                                            <div class="table-responsive">
+                                                <input type="hidden" name="Id" id="hdn-audited-plan-id" />
+                                                <table class="table table-bordered">
+                                                    <tr>
+                                                        <td class="w-25"><strong>Audit Category</strong> </td>
+                                                        <td class="text-left align-middle td-audited-audit-category"></td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="w-25"><strong>Description</strong> </td>
+                                                        <td class="text-left align-middle td-audited-description"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="w-25"><strong>Objective</strong> </td>
+                                                        <td class="text-left align-middle td-audited-objective"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="w-25"><strong>Criteria</strong> </td>
+                                                        <td class="text-left align-middle td-audited-criteria"></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+
+                                            <hr class="hr-style-1" />
+
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered">
+                                                    <tr>
+                                                        <td class="w-25"><strong>Date</strong> </td>
+                                                        <td class="text-left align-middle td-audited-date"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="w-25"><strong>Auditors</strong> </td>
+                                                        <td class="text-left">
+                                                            <ul class="ul-audited-auditors list-group">
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="w-25"><strong>Supporting Files</strong> </td>
+                                                        <td class="text-left">
+                                                            <ul class="ul-audited-supporting-files list-group">
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+
+                                        </div>
+                                        <div class="dv dv-audit-finding d-none">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered" id="tbl-list" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-center">#</th>
+                                                            <th class="w-25">Name</th>
+                                                            <th class="w-50">Description</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="tbl-audit-finding">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="mdl-new-program" tabindex="-1" role="dialog" aria-labelledby="mdl-new-program" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Program</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new-program">
+                <div class="row no-gutters mb-2">
+                    <div class="col-12">
+                        <label>Audit Category</label>
+                        <select class="fld-audit-category form-control"></select>
+                        <input type="hidden" id="fld-selected-audit-category" name="AuditCategoryName" data-required="true" />
+                        <input type="hidden" id="fld-selected-audit-id" name="AuditCategoryId" data-required="true" />
+                    </div>
+                </div>
+                <div class="row no-gutters mb-2">
+                    <div class="col-12">
+                        <label>Description</label>
+                        <textarea type="text" class="form-control" id="fld-new-auditprogram-description" name="Description" data-required="true" placeholder="-"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-program-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-program-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-program" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-program" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Program</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-edit-program">
+                <div class="row no-gutters mb-2">
+                    <div class="col-12">
+                        <label>Audit Category</label>
+                        <select class="fld-edit-audit-category form-control"></select>
+                        <input type="hidden" id="fld-edit-auditprogram-id" name="Id" data-required="true" />
+                        <input type="hidden" id="fld-selected-edit-audit-category" name="AuditCategoryName" data-required="true" />
+                        <input type="hidden" id="fld-selected-edit-audit-id" name="AuditCategoryId" data-required="true" />
+                    </div>
+                </div>
+                <div class="row no-gutters mb-2">
+                    <div class="col-12">
+                        <label>Description</label>
+                        <textarea type="text" class="form-control" id="fld-edit-auditprogram-description" name="Description" data-required="true" placeholder="-"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-program-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-program-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-audit-mstypes" tabindex="-1" role="dialog" aria-labelledby="mdl-new-audit-mstypes" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">MS Type</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new-mstype">
+                <div class="row no-gutters mb-2">
+                    <div class="col-12">
+                        <select class="fld-ms-type form-control"></select>
+                        <input type="hidden" id="fld-mstype-audit-id" name="Id" data-required="true" />
+                        <input type="hidden" id="fld-selected-mstype-id" name="OrganizationManagementSystemId" data-required="true" />
+                        <input type="hidden" id="fld-selected-mstype-type" name="OrganizationManagementSystemType" data-required="true" />
+                    </div>
+                </div>
+                <div class="row no-gutters pt-2">
+                    <div class="col-12">
+                        <table class="table table-bordered w-100 tbl-mstypes">
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-mstype-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary btn-save-mstype">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-auditprogram-schedule" tabindex="-1" role="dialog" aria-labelledby="mdl-new-auditprogram-schedule" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Schedule</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new-schedule">
+                <div class="row no-gutters">
+                    <div class="col-6">
+                        <label>Start Date</label>
+                        <input class="form-control mb-3 fld-date" type="text" id="fld-new-audit-start-date" name="StartDate" data-required="true" />
+                    </div>
+                    <div class="col-6 pl-2">
+                        <label>End Date</label>
+                        <input class="form-control mb-3 fld-date" type="text" id="fld-new-audit-end-date" name="EndDate" data-required="true" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-schedule-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-schedule-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-auditprogram-processes" tabindex="-1" role="dialog" aria-labelledby="mdl-new-auditprogram-processes" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Processes</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new-process">
+                <div class="row no-gutters">
+                    <div class="col-11">
+                        <input type="hidden" id="fld-process-audit-id" name="Id" data-required="true" />
+                        <input class="form-control mb-3" type="text" id="fld-new-audit-process" name="OrganizationBusinessProcessName" data-required="true" placeholder="-" />
+                    </div>
+                    <div class="col-1 text-center">
+                        <button class="btn btn-sm btn-outline-primary btn-save-process"><i class="fa fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="row no-gutters pt-2">
+                    <div class="col-12">
+                        <table class="table table-bordered w-100 tbl-processes">
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-schedule-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-audit-plan" tabindex="-1" role="dialog" aria-labelledby="mdl-new-audit-plan" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Audit Plan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-new-auditplan">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Pre planned</label>
+                        <select class="fld-auditprogram-category form-control mb-2"></select>
+                        <input type="hidden" id="fld-author-id" name="AuthorId" value="@Model.Employee.Id" data-required="true" />
+                        <input type="hidden" id="fld-author-name" name="AuthorName" value="@Model.Employee.Fullname" data-required="true" />
+                        <input type="hidden" id="fld-selected-auditplan-category" name="AuditCategoryName" data-required="true" />
+                        <input type="hidden" id="fld-selected-auditplan-id" name="AuditCategoryId" data-required="true" />
+                    </div>
+                </div>
+                <div class="row no-gutters mb-2">
+                    <div class="col">
+                        <label>Start Date</label>
+                        <input type="text" class="fld-new-auditplan-start-date fld-date form-control" name="StartDatePlan" placeholder="--/--/----" />
+                    </div>
+                    <div class="col pl-2">
+                        <label>End Date</label>
+                        <input type="text" class="fld-new-auditplan-end-date fld-date form-control" name="EndDatePlan" placeholder="--/--/----" />
+                    </div>
+                </div>
+                <div class="row no-gutters mb-2">
+                    <div class="col">
+                        <label>Title</label>
+                        <input type="text" class="form-control" id="fld-new-auditplan-title" name="Name" data-required="true" placeholder="-">
+                    </div>
+                </div>
+                <div class="row no-gutters mb-2">
+                    <div class="col">
+                        <label>Description</label>
+                        <textarea type="text" class="form-control" id="fld-new-audit-description" name="Description" data-required="true" placeholder="-"></textarea>
+                    </div>
+                </div>
+                <div class="row no-gutters mb-2">
+                    <div class="col">
+                        <label>Objectives</label>
+                        <input type="text" class="form-control" id="fld-new-auditplan-objective" name="Objectives" data-required="true" placeholder="-" />
+                    </div>
+                    <div class="col pl-2">
+                        <label>Criteria</label>
+                        <input type="text" class="form-control" id="fld-new-auditplan-criteria" name="Criteria" data-required="true" placeholder="-" />
+                    </div>
+                </div>
+                <hr />
+
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-auditplan-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-auditplan-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-view-audit-plan" tabindex="-1" role="dialog" aria-labelledby="mdl-view-audit-plan" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title mdl-auditplan-title">Title</h5>
+                <span class="dv-auditplan-date pt-2 pl-2"></span>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-edit-auditplan">
+                <div class="row">
+                    <div class="col-12 pt-2">
+                        <input type="hidden" name="Id" id="fld-edit-auditplan-id" />
+                        <div class="dv-view-auditplan-content"></div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-auditplan-delete" class="btn btn-danger">Delete</button>
+                <button type="button" id="btn-edit-auditplan-save" class="btn btn-primary">Update</button>
+                <button type="button" id="btn-edit-auditplan-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-audit-plan" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-audit-plan" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Audit Plan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body f12" id="bdy-edit">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Audit</label>
+                        <input type="text" class="form-control mb-2" id="fld-edit-audit" name="Audit" data-required="true" placeholder="..." />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col">
+                        <label>Audit Category</label>
+                        <input type="text" class="form-control mb-2" id="fld-edit-audit-category" name="AuditCategory" data-required="true" placeholder="..." />
+                    </div>
+                    <div class="col pl-2">
+                        <label>Audit Types</label>
+                        <input type="text" class="form-control mb-2" id="fld-edit-audit-types" name="AuditTypes" data-required="true" placeholder="..." />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Description</label>
+                        <textarea type="text" name="Description" class="form-control mb-2" id="fld-edit-description" placeholder="..." data-required="true"></textarea>
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Audit Objective</label>
+                        <textarea type="text" name="AuditObjective" class="form-control mb-2" id="fld-edit-audit-objective" placeholder="..." data-required="true"></textarea>
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Audit Criteria</label>
+                        <input type="text" class="form-control mb-2" id="fld-edit-audit-criteria" name="AuditCriteria" data-required="true" placeholder="..." />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Scope</label>
+                        <input type="text" class="form-control mb-2" id="fld-edit-scope" name="Scope" data-required="true" placeholder="..." />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Audit Leader</label>
+                        <select class="fld-edit-audit-leader form-control mb-2"></select>
+                        <input class="form-control" type="hidden" id="fld-selected-audit-leader" name="AuditLeader" data-required="true" />
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Auditors</label>
+                        <select class="fld-edit-auditors form-control mb-2"></select>
+                        <input class="form-control" type="hidden" id="fld-selected-auditors" name="Auditors" data-required="true" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-audit-plan-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-audit-plan-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new-finding" tabindex="-1" role="dialog" aria-labelledby="mdl-new-finding" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">New Findings</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new-finding">
+                <div class="row no-gutters mb-2">
+                    <div class="col-12">
+                        <label>Name</label>
+                        <input type="text" class="form-control" id="fld-new-finding-name" name="Name" data-required="true" placeholder="-" />
+                    </div>
+                </div>
+                <div class="row no-gutters mb-2">
+                    <div class="col-12">
+                        <label>Description</label>
+                        <textarea type="text" class="form-control" id="fld-new-finding-description" name="Description" data-required="true" placeholder="-"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-finding-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-finding-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit-finding" tabindex="-1" role="dialog" aria-labelledby="mdl-edit-finding" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Findings</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit-finding">
+                <div class="row no-gutters mb-2">
+                    <div class="col-12">
+                        <label>Name</label>
+                        <input type="hidden" name="AuditPlanId" id="fld-edit-finding-auditplan-id" data-required="true" />
+                        <input type="hidden" name="Id" id="fld-edit-finding-id" data-required="true" />
+                        <input type="text" class="form-control" id="fld-edit-finding-name" name="Name" data-required="true" placeholder="-" />
+
+                    </div>
+                </div>
+                <div class="row no-gutters mb-2">
+                    <div class="col-12">
+                        <label>Description</label>
+                        <textarea type="text" class="form-control" id="fld-edit-finding-description" name="Description" data-required="true" placeholder="-"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-finding-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-finding-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

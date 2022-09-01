@@ -1,0 +1,117 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+
+
+@section Scripts{
+    <script src="~/Content/js/information-management/document-settings/index.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@model Web.Areas.InformationManagement.Data.InformationManagementViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-6">
+                Document Settings
+            </div>
+            <div class="col-6">
+                <button id="btn-add" class="btn btn-sm btn-primary fa-pull-right"><i class="fa fa-plus"></i> Add Setting</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            @{
+                if (Model.DocumentSettings.Count > 0) {
+                    var ctr = 0;
+                    foreach (var a in Model.DocumentSettings) {
+                        ctr++;
+
+                    <div class="col-4 pt-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col-6">
+                                        @a.Name
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <a href="javascript:void(0);" class="btn btn-sm btn-outline-secondary btn-edit" data-id="@a.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                        <a href="javascript:void(0);" class="btn btn-sm btn-outline-danger btn-delete" data-id="@a.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row no-gutters f12">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            @a.Description
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        }
+                    } else { 
+                        <p>No data available.</p>
+                    }
+                }
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new" tabindex="-1" role="dialog" aria-labelledby="mdl-new" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Setting</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new">
+                <input type="text" class="form-control mb-2" id="fld-new-name" name="Name" data-required="true" placeholder="Name" />
+                <input type="text" class="form-control" id="fld-new-description" name="Description" data-required="true" placeholder="Description" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit" tabindex="-1" role="dialog" aria-labelledby="mdl-edit" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Setting</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit">
+                <input type="hidden" id="fld-edit-id" name="Id" data-required="true" />
+                <input type="text" class="form-control mb-2" id="fld-edit-name" name="Name" data-required="true" placeholder="Name" />
+                <input type="text" class="form-control" id="fld-edit-description" name="Description" data-required="true" placeholder="Description" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-save" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,157 @@
+﻿
+@{
+    ViewBag.Title = "General";
+    Layout = "~/Areas/Shared/Views/_Layout.cshtml";
+    ViewBag.User = Model.Employee.Fullname;
+}
+
+@section Scripts{
+    <script src="~/Content/js/settings/general/index.js"></script>
+    <script src="~/Content/lib/datatable/jquery.dataTables.js"></script>
+    <script src="~/Content/lib/datatable/dataTables.bootstrap4.js"></script>
+
+}
+
+@model Web.Areas.Setting.Data.SettingViewModel
+
+@section Styles{
+    <link href="~/Content/css/locations/common.css" rel="stylesheet" />
+}
+
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-6 text-left">
+                General
+            </div>
+            <div class="col-6">
+                @*<button id="btn-test" class="btn btn-sm btn-outline-primary fa-pull-right">Test Button</button>*@
+                <input type="hidden" id="hdn-user-id" name="Id" value="@Model.Employee.Id" />
+                <input type="hidden" id="hdn-user-name" name="Name" value="@Model.Employee.Fullname" />
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+
+        <div class="col-12">
+            @{
+                var ctr = 0;
+                foreach (var a in Model.Settings) {
+                    ctr++;
+
+                    <div id="bdy-update-@a.Name.ToLower().Replace(" ", "-")">
+                        <div class="row no-gutters">
+                            <div class="col-3 pt-1">
+                                <label>@a.Name</label>
+                                <input type="hidden" class="form-control" id="fld-name-@a.Name.ToLower().Replace(" ", "-")" name="Name" value="@a.Name" />
+                                <input type="hidden" class="form-control" id="fld-id-@a.Name.ToLower().Replace(" ", "-")" name="Id" value="@a.Id" />
+                            </div>
+                            <div class="col-8">
+                                @{
+                                    if (a.Name == "Text Editor") {
+                                        <select class="fld-text-editor">
+                                            <option value="Default">Default</option>
+                                            <option value="None">None</option>
+                                        </select>
+                                        <input type="hidden" class="form-control" id="fld-selected-value-@a.Name.ToLower().Replace(" ", "-")" name="Value" value="@a.Value" />
+                                    } else if (a.Name == "Theme") {
+                                        <select class="fld-theme">
+                                            <option value=""></option>
+                                            <option value="Theme 1">Theme 1</option>
+                                            <option value="Theme 2">Theme 2</option>
+                                            <option value="Theme 3">Theme 3</option>
+                                        </select>
+                                        <input type="hidden" class="form-control" id="fld-selected-value-@a.Name.ToLower().Replace(" ", "-")" name="Value" value="@a.Value" />
+                                    } else if (a.Name == "Recipients for expiring documents") {
+                                        <select class="fld-employees form-control" multiple></select>
+                                    } else {
+                                        <input type="text" class="form-control" id="fld-value-@a.Name.ToLower().Replace(" ", "-")" name="Value" value="@a.Value" />
+                                    }
+                                }
+                            </div>
+                            <div class="col-1 pl-2">
+                                <button type="button" id="btn-update" data-name="@a.Name.ToLower().Replace(" ", "-")" class="btn btn-sm btn-success"><i class="fas fa-save"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            }
+
+
+        </div>
+
+        <div class="col-4 pl-2">
+
+        </div>
+        
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-new" tabindex="-1" role="dialog" aria-labelledby="mdl-new" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">New General Setting</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-new">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label>
+                        <input type="text" class="form-control mb-2" id="fld-new-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-12">
+                        <label>Group</label>
+                        <input type="text" class="form-control mb-2" id="fld-new-group" name="Group" data-required="true" placeholder="Group" />
+                    </div>
+                    <div class="col-12">
+                        <label>Value</label>
+                        <textarea type="text" class="form-control" id="fld-new-value" name="Value" data-required="true" placeholder="Value"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-new-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-new-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mdl-edit" tabindex="-1" role="dialog" aria-labelledby="mdl-edit" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content f12">
+            <div class="modal-header">
+                <h5 class="modal-title">Update General Setting</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bdy-edit">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <label>Name</label>
+                        <input type="hidden" id="fld-edit-id" data-required="true" name="Id" />
+                        <input type="text" class="form-control mb-2" id="fld-edit-name" name="Name" data-required="true" placeholder="Name" />
+                    </div>
+                    <div class="col-12">
+                        <label>Group</label>
+                        <input type="text" class="form-control mb-2" id="fld-edit-group" name="Group" data-required="true" placeholder="Group" />
+                    </div>
+                    <div class="col-12">
+                        <label>Value</label>
+                        <textarea type="text" class="form-control" id="fld-edit-value" name="Value" data-required="true" placeholder="Value"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-edit-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
